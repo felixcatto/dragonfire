@@ -4,8 +4,8 @@ import { Error } from '../lib/utils';
 import TagsSelect from '../components/tagsSelect';
 
 export default ({ article, tags, method = 'post' }) => {
-  const { urlFor } = React.useContext(Context);
-  const action = method === 'put' ? urlFor('article', { id: article.id }) : urlFor('articles');
+  const { getApiUrl } = React.useContext(Context);
+  const action = method === 'put' ? getApiUrl('article', { id: article.id }) : getApiUrl('articles');
 
   const transformTag = tag => ({ value: tag.id, label: tag.name });
   const tagsForSelect = tags.map(transformTag);
@@ -32,7 +32,7 @@ export default ({ article, tags, method = 'post' }) => {
         </div>
       </div>
 
-      <a href={urlFor('articles')} className="mr-10">
+      <a href={getApiUrl('articles')} className="mr-10">
         Back
       </a>
       <button className="btn btn-primary" type="submit">

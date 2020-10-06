@@ -5,7 +5,7 @@ import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import fastifySecureSession from 'fastify-secure-session';
 import { objectionPlugin, routesPlugin } from '../lib/utils';
-import routes from '../routes';
+import routes from '../routes/index';
 import * as models from '../models';
 
 export default () => {
@@ -22,7 +22,7 @@ export default () => {
 
   app.decorate('ctx', {
     template,
-    urlFor: fastifyReverseRoutes,
+    getApiUrl: fastifyReverseRoutes,
     routes: null,
     isDevelopment: mode === 'development',
   });

@@ -4,13 +4,13 @@ import usersFixture from './fixtures/users';
 
 describe('tags', () => {
   const server = getApp();
-  let urlFor;
+  let getApiUrl;
   let Tag;
   let User;
 
   beforeAll(async () => {
     await server.ready();
-    urlFor = server.ctx.urlFor;
+    getApiUrl = server.ctx.getApiUrl;
     User = server.objection.User;
     Tag = server.objection.Tag;
     await User.query().delete();
@@ -25,7 +25,7 @@ describe('tags', () => {
   it('GET /tags', async () => {
     const res = await server.inject({
       method: 'GET',
-      url: urlFor('tags'),
+      url: getApiUrl('tags'),
     });
     expect(res.statusCode).toBe(200);
     expect(JSON.parse(res.body)).toMatchObject(tagsFixture);
@@ -35,7 +35,7 @@ describe('tags', () => {
     const tag = { name: 'test' };
     const res = await server.inject({
       method: 'post',
-      url: urlFor('tags'),
+      url: getApiUrl('tags'),
       payload: tag,
     });
 
@@ -51,7 +51,7 @@ describe('tags', () => {
     };
     const res = await server.inject({
       method: 'put',
-      url: urlFor('tag', { id: tag.id }),
+      url: getApiUrl('tag', { id: tag.id }),
       payload: tag,
     });
 
@@ -64,7 +64,7 @@ describe('tags', () => {
     const [tag] = tagsFixture;
     const res = await server.inject({
       method: 'delete',
-      url: urlFor('tag', { id: tag.id }),
+      url: getApiUrl('tag', { id: tag.id }),
     });
     const tagFromDb = await Tag.query().findById(tag.id);
     expect(res.statusCode).toBe(201);

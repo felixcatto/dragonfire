@@ -6,7 +6,7 @@ import { Link, userRolesToIcons, roles } from '../lib/utils';
 import CommentForm from '../comments/form';
 import s from './styles.module.scss';
 
-export default ({ urlFor, isBelongsToUser, article, newComment }) => (
+export default ({ getApiUrl, isBelongsToUser, article, newComment }) => (
   <Layout>
     <div className="d-flex align-items-center mb-10">
       <h3 className="mr-20 mb-0">{article.title}</h3>
@@ -48,12 +48,12 @@ export default ({ urlFor, isBelongsToUser, article, newComment }) => (
               {isBelongsToUser(comment.author_id) && (
                 <div className="ml-30">
                   <a
-                    href={urlFor('editComment', { id: article.id, commentId: comment.id })}
+                    href={getApiUrl('editComment', { id: article.id, commentId: comment.id })}
                     className="fa fa-edit fa_big fa_link"
                     title="edit"
                   ></a>
                   <Link
-                    href={urlFor('comment', { id: article.id, commentId: comment.id })}
+                    href={getApiUrl('comment', { id: article.id, commentId: comment.id })}
                     method="delete"
                   >
                     <i className="fa fa-trash-alt fa_big fa_link" title="delete"></i>
@@ -74,8 +74,8 @@ export default ({ urlFor, isBelongsToUser, article, newComment }) => (
 
     <CommentForm
       comment={newComment}
-      action={urlFor('comments', { id: article.id })}
-      backUrl={urlFor('articles')}
+      action={getApiUrl('comments', { id: article.id })}
+      backUrl={getApiUrl('articles')}
     />
   </Layout>
 );

@@ -1,9 +1,15 @@
-export default {
+import { makeUrlFor, makeUndefinedKeyError } from './utils';
+
+export const routes = makeUndefinedKeyError({
   root: '/',
-  users: {
-    index: '/users',
-    new: '/users/new',
-    edit: '/users/:id/edit',
-    editUrl: id => `/users/${id}/edit`,
-  },
-};
+  users: '/users',
+  user: '/users/:id',
+  newUser: '/users/new',
+  editUser: '/users/:id/edit',
+  articles: '/articles',
+  tags: '/tags',
+  projectStructure: '/structure',
+  newSession: '/session/new',
+});
+
+export const getUrl = makeUrlFor(routes);

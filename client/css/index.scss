@@ -3,6 +3,12 @@
 @import './solid.min.css';
 @import './scssHelpers.scss';
 
+:root {
+  --orange: #e65100;
+  /*$orange: #ff6f00;*/
+  --orange-600: #d84315;
+}
+
 html {
   font-size: 18px;
 }
@@ -40,8 +46,36 @@ select.form-control:focus {
   color: #222;
 }
 
-.btn {
+.btn-primary {
   padding-top: 4px;
+  background-color: var(--orange);
+  border-color: var(--orange);
+  &:hover {
+    background-color: var(--orange-600);
+    border-color: var(--orange-600);
+  }
+  &:active,
+  &:focus {
+    background-color: var(--orange-600) !important;
+    border-color: var(--orange-600) !important;
+    box-shadow: 0 0 0 0.2rem rgba(230, 81, 0, 0.5) !important;
+  }
+}
+.btn-outline-primary {
+  color: var(--orange);
+  border-color: var(--orange);
+  &:hover {
+    color: #fff;
+    background-color: var(--orange);
+    border-color: var(--orange);
+  }
+}
+
+a {
+  color: var(--orange);
+  &:hover {
+    color: var(--orange-600);
+  }
 }
 
 .form-control {
@@ -51,7 +85,7 @@ select.form-control:focus {
 }
 
 .fa {
-  color: steelblue;
+  color: var(--orange);
   &_big {
     padding: 2px 5px;
   }
@@ -88,8 +122,8 @@ select.form-control:focus {
   color: #6e7582 !important;
 }
 
-.steelblue {
-  color: steelblue;
+.orange {
+  color: var(--orange);
 }
 
 // spinner START
@@ -106,7 +140,7 @@ $duration: 1.8s;
     stroke-dashoffset: 0;
     transform-origin: center;
     animation: dash $duration ease-in-out infinite;
-    stroke: steelblue;
+    stroke: var(--orange);
     fill: none;
     stroke-linecap: round;
     r: 30;
@@ -160,18 +194,18 @@ $duration: 1.8s;
 .app {
   &__header {
     position: relative;
-    background: steelblue;
+    background: var(--orange);
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
   }
   &__header-fg {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px;
+    padding: 10px 15px;
     color: #fff;
   }
   &__logo {
-    width: 30px;
+    height: 50px;
   }
   &__user-role-icon {
     color: #fff;
@@ -192,6 +226,8 @@ $duration: 1.8s;
     margin-right: -10px;
     padding: 4px 10px;
     color: #fff;
+    cursor: pointer;
+    text-decoration: none;
   }
   &__nav-link {
     padding: 0px 6px;
@@ -207,16 +243,16 @@ $duration: 1.8s;
     }
     &_active {
       background: #fff;
-      color: steelblue;
+      color: var(--orange);
       &:hover {
-        color: steelblue;
+        color: var(--orange);
         text-decoration: none;
         cursor: default;
       }
     }
   }
   &__body {
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 70px);
     padding-top: 20px;
     padding-bottom: 20px;
     background: #fff;

@@ -59,7 +59,7 @@ if (process.env.ANALYZE) {
     mode: 'production',
   };
 } else {
-  common.entry['index.js'] = [common.entry['index.js'], 'blunt-livereload/dist/client'];
+  common.entry['index.js'] = ['blunt-livereload/dist/client', common.entry['index.js']];
 
   module.exports = {
     ...common,

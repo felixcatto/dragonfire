@@ -6,11 +6,11 @@ import encrypt from '../lib/secure';
 describe('users', () => {
   const server = getApp();
   let User;
-  let urlFor;
+  let getApiUrl;
 
   beforeAll(async () => {
     await server.ready();
-    urlFor = server.ctx.urlFor;
+    getApiUrl = server.ctx.getApiUrl;
     User = server.objection.User;
   });
 
@@ -22,7 +22,7 @@ describe('users', () => {
   it('GET /users', async () => {
     const res = await server.inject({
       method: 'GET',
-      url: urlFor('users'),
+      url: getApiUrl('users'),
     });
     const expectedUsers = usersFixture.map(user => omit(user, 'password'));
     expect(res.statusCode).toBe(200);
@@ -39,7 +39,7 @@ describe('users', () => {
 
     const res = await server.inject({
       method: 'post',
-      url: urlFor('users'),
+      url: getApiUrl('users'),
       payload: user,
     });
 
@@ -54,7 +54,7 @@ describe('users', () => {
     const user = omit(usersFixture[0], 'id');
     const res = await server.inject({
       method: 'post',
-      url: urlFor('users'),
+      url: getApiUrl('users'),
       payload: user,
     });
 
@@ -68,7 +68,7 @@ describe('users', () => {
     };
     const res = await server.inject({
       method: 'put',
-      url: urlFor('user', { id: user.id }),
+      url: getApiUrl('user', { id: user.id }),
       payload: user,
     });
 
@@ -82,7 +82,7 @@ describe('users', () => {
     const [user] = usersFixture;
     const res = await server.inject({
       method: 'delete',
-      url: urlFor('user', { id: user.id }),
+      url: getApiUrl('user', { id: user.id }),
     });
     const userFromDb = await User.query().findById(user.id);
     expect(res.statusCode).toBe(201);

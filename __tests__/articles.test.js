@@ -10,7 +10,7 @@ describe('articles', () => {
   let Article;
   let Tag;
   let knex;
-  let urlFor;
+  let getApiUrl;
 
   beforeAll(async () => {
     await server.ready();
@@ -18,7 +18,7 @@ describe('articles', () => {
     Article = server.objection.Article;
     Tag = server.objection.Tag;
     knex = server.objection.knex;
-    urlFor = server.ctx.urlFor;
+    getApiUrl = server.ctx.getApiUrl;
 
     await User.query().delete();
     await Tag.query().delete();
@@ -36,7 +36,7 @@ describe('articles', () => {
   it('GET /articles', async () => {
     const res = await server.inject({
       method: 'GET',
-      url: urlFor('articles'),
+      url: getApiUrl('articles'),
     });
     expect(res.statusCode).toBe(200);
     expect(JSON.parse(res.body)).toMatchObject(articlesFixture);
@@ -46,7 +46,7 @@ describe('articles', () => {
     const [article] = articlesFixture;
     const res = await server.inject({
       method: 'GET',
-      url: urlFor('article', { id: article.id }),
+      url: getApiUrl('article', { id: article.id }),
     });
     expect(res.statusCode).toBe(200);
     expect(JSON.parse(res.body)).toMatchObject(article);
@@ -59,7 +59,7 @@ describe('articles', () => {
     };
     const res = await server.inject({
       method: 'post',
-      url: urlFor('articles'),
+      url: getApiUrl('articles'),
       payload: article,
     });
 
@@ -77,7 +77,7 @@ describe('articles', () => {
     };
     const res = await server.inject({
       method: 'post',
-      url: urlFor('articles'),
+      url: getApiUrl('articles'),
       payload: article,
     });
 
@@ -95,7 +95,7 @@ describe('articles', () => {
     };
     const res = await server.inject({
       method: 'put',
-      url: urlFor('article', { id: article.id }),
+      url: getApiUrl('article', { id: article.id }),
       payload: article,
     });
 
@@ -111,7 +111,7 @@ describe('articles', () => {
     };
     const res = await server.inject({
       method: 'put',
-      url: urlFor('article', { id: article.id }),
+      url: getApiUrl('article', { id: article.id }),
       payload: article,
     });
 
@@ -124,7 +124,7 @@ describe('articles', () => {
     const [article] = articlesFixture;
     const res = await server.inject({
       method: 'delete',
-      url: urlFor('article', { id: article.id }),
+      url: getApiUrl('article', { id: article.id }),
     });
     const articleFromDb = await Article.query().findById(article.id);
     expect(res.statusCode).toBe(201);

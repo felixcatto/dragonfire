@@ -2,12 +2,12 @@ import React from 'react';
 import Layout from '../common/layout';
 import { Link } from '../lib/utils';
 
-export default ({ urlFor, articles, isSignedIn, isBelongsToUser }) => (
+export default ({ getApiUrl, articles, isSignedIn, isBelongsToUser }) => (
   <Layout>
     <h3>Articles List</h3>
 
     {isSignedIn && (
-      <a href={urlFor('newArticle')} className="d-inline-block mb-30">
+      <a href={getApiUrl('newArticle')} className="d-inline-block mb-30">
         <button className="btn btn-primary">Create new article</button>
       </a>
     )}
@@ -31,15 +31,15 @@ export default ({ urlFor, articles, isSignedIn, isBelongsToUser }) => (
             <td>{article.tags.map(tag => tag.name).join(', ')}</td>
             <td>
               <div className="d-flex justify-content-end">
-                <a href={urlFor('article', { id: article.id })} className="mr-10">
+                <a href={getApiUrl('article', { id: article.id })} className="mr-10">
                   <button className="btn btn-sm btn-outline-primary">Show Article</button>
                 </a>
                 {isBelongsToUser(article.author_id) && (
                   <>
-                    <a href={urlFor('editArticle', { id: article.id })} className="mr-10">
+                    <a href={getApiUrl('editArticle', { id: article.id })} className="mr-10">
                       <button className="btn btn-sm btn-outline-primary">Edit Article</button>
                     </a>
-                    <Link href={urlFor('article', { id: article.id })} method="delete">
+                    <Link href={getApiUrl('article', { id: article.id })} method="delete">
                       <div className="btn btn-sm btn-outline-primary">Remove Article</div>
                     </Link>
                   </>

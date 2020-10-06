@@ -1,53 +1,79 @@
 import React from 'react';
-import Context from '../lib/context';
-import { Error } from '../lib/utils';
+import { Link, useHistory } from 'react-router-dom';
+import { useContext } from '../lib/context';
+import { ErrorMessage, Field, roles, emptyObject } from '../lib/utils';
+import { Formik, Form } from 'formik';
+import { getUrl } from '../lib/routes';
+import axios from 'axios';
+import { omit } from 'lodash';
 
-export default ({ user, roles, method = 'post' }) => {
-  const { urlFor } = React.useContext(Context);
-  const action = method === 'put' ? urlFor('user', { id: user.id }) : urlFor('users');
+const UserForm = ({ user = emptyObject, method = 'post' }) => {
+  const history = useHistory();
+  const { getApiUrl, actions } = useContext();
+
+  const onSubmit = async (values, fmActions) => {
+    const url = method === 'put' ? getApiUrl('user', { id: user.id }) : getApiUrl('users');
+    try {
+      await axios({ method, url, data: values });
+      await actions.loadUsers();
+      history.push(getUrl('users'));
+    } catch (e) {
+      fmActions.setStatus({ apiErrors: e.response.data.errors });
+    }
+  };
 
   return (
-    <form action={action} method="post">
-      <input type="hidden" name="_method" value={method} />
-      <div className="row mb-20">
-        <div className="col-6">
-          <div className="mb-15">
-            <label>Name</label>
-            <input type="text" className="form-control" name="name" defaultValue={user.name} />
-            <Error entity={user} path="name" />
-          </div>
-          <div className="mb-15">
-            <label>Role</label>
-            <select name="role" className="form-control" defaultValue={user.role}>
-              {Object.values(roles).map(role => (
-                <option key={role} value={role}>{role}</option>
-              ))}
-            </select>
-            <Error entity={user} path="role" />
-          </div>
-          <div className="mb-15">
-            <label>Email</label>
-            <input type="text" className="form-control" name="email" defaultValue={user.email} />
-            <Error entity={user} path="email" />
-          </div>
-          <div>
-            <label>Password</label>
-            <input
-              type="password"
-              className="form-control"
-              name="password"
-            />
-            <Error entity={user} path="password" />
+    <Formik
+      initialValues={{
+        name: user.name,
+        role: user.role || roles.guest,
+        email: user.email,
+        password: '',
+      }}
+      onSubmit={onSubmit}
+      initialStatus={{ apiErrors: {} }}
+    >
+      <Form>
+        <div className="row mb-20">
+          <div className="col-6">
+            <div className="mb-15">
+              <label>Name</label>
+              <Field className="form-control" name="name" />
+              <ErrorMessage name="name" />
+            </div>
+            <div className="mb-15">
+              <label>Role</label>
+              <Field className="form-control" as="select" name="role">
+                {Object.values(roles).map(role => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage name="role" />
+            </div>
+            <div className="mb-15">
+              <label>Email</label>
+              <Field className="form-control" name="email" />
+              <ErrorMessage name="email" />
+            </div>
+            <div>
+              <label>Password</label>
+              <Field className="form-control" type="password" name="password" />
+              <ErrorMessage name="password" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <a href={urlFor('users')} className="mr-10">
-        Back
-      </a>
-      <button className="btn btn-primary" type="submit">
-        Save
-      </button>
-    </form>
+        <Link to={getUrl('users')} className="mr-10">
+          Back
+        </Link>
+        <button className="btn btn-primary" type="submit">
+          Save
+        </button>
+      </Form>
+    </Formik>
   );
 };
+
+export default UserForm;

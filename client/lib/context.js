@@ -1,3 +1,6 @@
 import React from 'react';
 
-export default React.createContext(null);
+const Context = React.createContext(null);
+
+export const useContext = () => React.useContext(Context);
+export default Context;

@@ -8,11 +8,11 @@ describe('articles', () => {
   let User;
   let Article;
   let Comment;
-  let urlFor;
+  let getApiUrl;
 
   beforeAll(async () => {
     await server.ready();
-    urlFor = server.ctx.urlFor;
+    getApiUrl = server.ctx.getApiUrl;
     User = server.objection.User;
     Article = server.objection.Article;
     Comment = server.objection.Comment;
@@ -34,7 +34,7 @@ describe('articles', () => {
     };
     const res = await server.inject({
       method: 'post',
-      url: urlFor('comments', { id: -1 }),
+      url: getApiUrl('comments', { id: -1 }),
       payload: comment,
     });
 
@@ -52,7 +52,7 @@ describe('articles', () => {
 
     const res = await server.inject({
       method: 'put',
-      url: urlFor('comment', { id: comment.article_id, commentId: comment.id }),
+      url: getApiUrl('comment', { id: comment.article_id, commentId: comment.id }),
       payload: comment,
     });
 
@@ -65,7 +65,7 @@ describe('articles', () => {
     const [comment] = commentsFixture;
     const res = await server.inject({
       method: 'delete',
-      url: urlFor('comment', { id: comment.article_id, commentId: comment.id }),
+      url: getApiUrl('comment', { id: comment.article_id, commentId: comment.id }),
     });
 
     const commentFromDb = await Comment.query().findById(comment.id);

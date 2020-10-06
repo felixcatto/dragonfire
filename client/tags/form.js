@@ -3,8 +3,8 @@ import Context from '../lib/context';
 import { Error } from '../lib/utils';
 
 export default ({ tag, method = 'post' }) => {
-  const { urlFor } = React.useContext(Context);
-  const action = method === 'put' ? urlFor('tag', { id: tag.id }) : urlFor('tags');
+  const { getApiUrl } = React.useContext(Context);
+  const action = method === 'put' ? getApiUrl('tag', { id: tag.id }) : getApiUrl('tags');
 
   return (
     <form action={action} method="post">
@@ -19,7 +19,7 @@ export default ({ tag, method = 'post' }) => {
         </div>
       </div>
 
-      <a href={urlFor('tags')} className="mr-10">
+      <a href={getApiUrl('tags')} className="mr-10">
         Back
       </a>
       <button className="btn btn-primary" type="submit">

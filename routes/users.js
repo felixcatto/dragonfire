@@ -1,9 +1,15 @@
 import { validate, checkValueUnique, checkAdmin } from '../lib/utils';
 
+export const getUsers = async User => User.query();
+
 export default async app => {
   const { User } = app.objection;
 
-  app.get('/users', { name: 'users' }, async () => User.query());
+  app.get('/users', { name: 'users' }, async () => getUsers(User));
+
+  app.get('/users/:id', { name: 'user' }, async request =>
+    User.query().findById(request.params.id)
+  );
 
   app.post(
     '/users',
@@ -21,7 +27,7 @@ export default async app => {
 
   app.put(
     '/users/:id',
-    { name: 'user', preHandler: [checkAdmin, validate(User.yupSchema)] },
+    { preHandler: [checkAdmin, validate(User.yupSchema)] },
     async (request, reply) => {
       const { id } = request.params;
 

@@ -1,21 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { NavLink as RouterNavLink } from 'react-router-dom';
 import { compile } from 'path-to-regexp';
+import { isFunction } from 'lodash';
+import produce from 'immer';
+import { useFormikContext, getIn } from 'formik';
 import { roles } from '../../lib/sharedUtils';
+import { omit } from 'lodash';
 
 export * from '../../lib/sharedUtils';
 
-export const Link = ({ href, method, children }) => (
-  <form method="POST" action={href} className="fake-link">
-    <input type="hidden" name="_method" value={method} />
-    <button type="submit" className="fake-link__button">
-      {children}
-    </button>
-  </form>
-);
+export const ErrorMessage = ({ name }) => {
+  const { status, touched, errors } = useFormikContext();
+  const makeHtmlError = errorMsg => <div className="error">{errorMsg}</div>;
+  const fieldTouched = getIn(touched, name);
+  const frontendError = getIn(errors, name);
+  const backendError = getIn(status, ['apiErrors', name]);
+  if (frontendError && fieldTouched) {
+    return makeHtmlError(frontendError);
+  }
 
-export const Error = ({ entity, path }) => {
-  const errorMsg = entity.errors?.[path];
-  return errorMsg ? <div className="error">{errorMsg}</div> : null;
+  if (backendError) {
+    return makeHtmlError(backendError);
+  }
+
+  return null;
+};
+
+export const Field = props => {
+  const { values, handleBlur: onBlur, handleChange, setStatus, status } = useFormikContext();
+  const value = values[props.name];
+  const { as, children, ...restProps } = props;
+  const asElement = as || 'input';
+  const onChange = e => {
+    setStatus(omit(status, `apiErrors.${e.target.name}`));
+    handleChange(e);
+  };
+
+  return React.createElement(asElement, { ...restProps, onChange, onBlur, value }, children);
 };
 
 export const userRolesToIcons = {
@@ -39,3 +60,42 @@ export const makeUrlFor = rawRoutes => {
     return toPath(args, opts);
   };
 };
+
+export const NavLink = ({ ...restProps }) => (
+  <RouterNavLink
+    className="app__nav-link"
+    activeClassName="app__nav-link app__nav-link_active"
+    {...restProps}
+  />
+);
+
+export const useImmerState = initialState => {
+  const [state, setState] = useState(initialState);
+
+  const oldState = React.useRef();
+  oldState.current = state;
+
+  const setImmerState = React.useRef(fnOrObject => {
+    if (isFunction(fnOrObject)) {
+      const fn = fnOrObject;
+      setState(produce(oldState.current, fn));
+    } else {
+      const newState = fnOrObject;
+      setState({
+        ...oldState.current,
+        ...newState,
+      });
+    }
+  });
+
+  return [state, setImmerState.current];
+};
+
+export const emptyObject = new Proxy(
+  {},
+  {
+    get() {
+      return '';
+    },
+  }
+);

@@ -3,46 +3,28 @@ import encrypt from '../lib/secure';
 
 export default async app => {
   const { User } = app.objection;
-  const { urlFor } = app.ctx;
-
-  app.get('/session/new', { name: 'newSession' }, async (request, reply) => {
-    reply.render('common/Session', { user: emptyObject });
-  });
+  const { getApiUrl } = app.ctx;
 
   app.post(
     '/session',
     { name: 'session', preHandler: validate(User.yupLoginSchema) },
     async (request, reply) => {
-      if (request.errors) {
-        return reply.render('common/Session', { user: request.entityWithErrors });
-      }
-
       const user = await User.query().findOne('email', request.data.email);
       if (!user) {
-        return reply.render('common/Session', {
-          user: {
-            ...request.data,
-            errors: { email: 'User with such email not found' },
-          },
-        });
+        return reply.code(400).send({ errors: { email: 'User with such email not found' } });
       }
 
       if (user.password_digest !== encrypt(request.data.password)) {
-        return reply.render('common/Session', {
-          user: {
-            ...request.data,
-            errors: { password: 'Wrong password' },
-          },
-        });
+        return reply.code(400).send({ errors: { password: 'Wrong password' } });
       }
 
       request.session.set('userId', user.id);
-      reply.redirect(urlFor('home'));
+      return reply.send(user);
     }
   );
 
   app.delete('/session', async (request, reply) => {
     request.session.delete();
-    reply.redirect(urlFor('home'));
+    reply.code(201).send(User.guestUser);
   });
 };

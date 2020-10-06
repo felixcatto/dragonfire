@@ -36,6 +36,7 @@ const paths = {
   },
   client: {
     components: 'client/**/*.js',
+    css: 'client/css/*',
     cssModules: 'client/**/*.module.scss',
     dest: 'dist/client',
   },
@@ -136,6 +137,7 @@ const watch = async () => {
   gulp
     .watch(paths.client.components)
     .on('change', series(parallel(waitBundleClient, transpileCC), reloadBrowser));
+  gulp.watch(paths.client.css).on('change', series(waitBundleClient, reloadBrowser));
   gulp.watch(paths.client.cssModules).on('change', async pathname => {
     const dirs = pathname.split('/').slice(0, -1);
     const src = dirs.concat('*').join('/');
