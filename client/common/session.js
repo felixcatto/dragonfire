@@ -13,7 +13,7 @@ const LoginForm = () => {
   const onSubmit = async (values, fmActions) => {
     try {
       await actions.signIn(values);
-      history.push(getUrl('root'));
+      history.push(getUrl('home'));
     } catch (e) {
       fmActions.setStatus({ apiErrors: e.response.data.errors });
     }
@@ -43,7 +43,7 @@ const LoginForm = () => {
             </div>
           </div>
 
-          <Link to={getUrl('root')} className="mr-10">
+          <Link to={getUrl('home')} className="mr-10">
             Cancel
           </Link>
           <button className="btn btn-primary" type="submit">

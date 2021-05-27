@@ -1,7 +1,7 @@
 import { makeUrlFor, makeUndefinedKeyError } from './utils';
 
 export const routes = makeUndefinedKeyError({
-  root: '/',
+  home: '/',
   users: '/users',
   user: '/users/:id',
   newUser: '/users/new',

@@ -99,3 +99,6 @@ export const emptyObject = new Proxy(
     },
   }
 );
+
+export const ProtectedRoute = ({ canRender, component: Component, ...restProps }) =>
+  canRender ? <Component {...restProps} /> : '403 forbidden';

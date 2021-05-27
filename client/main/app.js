@@ -4,9 +4,15 @@ import cn from 'classnames';
 import { has } from 'lodash';
 import { useStore } from 'effector-react';
 import Context, { useContext } from '../lib/context';
-import { userRolesToIcons, NavLink, asyncStates, makeSessionInfo } from '../lib/utils';
+import {
+  userRolesToIcons,
+  NavLink,
+  asyncStates,
+  makeSessionInfo,
+  ProtectedRoute,
+} from '../lib/utils';
 import { routes, getUrl } from '../lib/routes';
-import Root from '../common/index';
+import Home from '../common/home';
 import Users from '../users/index';
 import NewUser from '../users/new';
 import EditUser from '../users/edit';
@@ -42,7 +48,7 @@ const Provider = ({ initialState, children }) => {
 const App = () => {
   const store = useContext();
   const { $session, actions, getApiUrl } = store;
-  const { currentUser, isSignedIn } = useStore($session);
+  const { currentUser, isSignedIn, isAdmin } = useStore($session);
   const userIconClass = role => cn('app__user-role-icon mr-5', userRolesToIcons[role]);
 
   console.log(currentUser);
@@ -53,7 +59,7 @@ const App = () => {
           <div className="d-flex align-items-center">
             <img src="/img/dragon.svg" className="app__logo mr-30" />
             <div className="d-flex">
-              <NavLink to={getUrl('root')} exact>
+              <NavLink to={getUrl('home')} exact>
                 Home
               </NavLink>
               <NavLink to={getUrl('users')}>Users</NavLink>
@@ -82,10 +88,10 @@ const App = () => {
       </div>
       <div className="container app__body">
         <Switch>
-          <Route exact path={routes.root} component={Root} />
+          <Route exact path={routes.home} component={Home} />
           <Route exact path={routes.users} component={Users} />
-          <Route exact path={routes.newUser} component={NewUser} />
-          <Route exact path={routes.editUser} component={EditUser} />
+          <ProtectedRoute canRender={isAdmin} exact path={routes.newUser} component={NewUser} />
+          <ProtectedRoute canRender={isAdmin} exact path={routes.editUser} component={EditUser} />
           <Route exact path={routes.newSession} component={LoginForm} />
         </Switch>
       </div>

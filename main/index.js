@@ -35,7 +35,7 @@ export default () => {
 
   app.register(fastifySecureSession, {
     secret: 'a secret with minimum length of 32 characters',
-    cookie: { path: '/' },
+    cookie: { path: '/', httpOnly: true },
   });
   app.register(routesPlugin);
   app.register(fastifyReverseRoutes.plugin);
