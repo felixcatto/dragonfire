@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink as RouterNavLink } from 'react-router-dom';
+import { NavLink as RouterNavLink, Route } from 'react-router-dom';
 import { compile } from 'path-to-regexp';
 import { isFunction } from 'lodash';
 import produce from 'immer';
@@ -100,5 +100,5 @@ export const emptyObject = new Proxy(
   }
 );
 
-export const ProtectedRoute = ({ canRender, component: Component, ...restProps }) =>
-  canRender ? <Component {...restProps} /> : '403 forbidden';
+export const ProtectedRoute = ({ canRender, ...restProps }) =>
+  canRender ? <Route {...restProps} /> : '403 forbidden';

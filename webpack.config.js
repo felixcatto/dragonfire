@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const babelConfig = require('./babelconfig.js');
 const { generateScopedName } = require('./lib/devUtils');
@@ -43,6 +44,9 @@ const common = {
     ],
   },
   plugins: [new MiniCssExtractPlugin({ filename: '../css/index.css' })],
+  optimization: {
+    minimizer: [`...`, new CssMinimizerPlugin()],
+  },
   stats: { warnings: false, children: false, modules: false },
 };
 
@@ -64,6 +68,6 @@ if (process.env.ANALYZE) {
   module.exports = {
     ...common,
     mode: 'development',
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'eval-cheap-module-source-map',
   };
 }

@@ -11,10 +11,10 @@ build:
 	NODE_ENV=production npx gulp build
 
 webpack-bundle:
-	NODE_ENV=production npx wp
+	NODE_ENV=production npx webpack
 
 webpack-bundle-analyze:
-	NODE_ENV=production ANALYZE=true npx wp
+	NODE_ENV=production ANALYZE=true npx webpack
 
 madge: madge-build
 	madge --image g.svg dist

@@ -50,7 +50,8 @@
     "babel-loader": "^8.1.0",
     "babel-plugin-css-modules-transform": "^1.6.2",
     "blunt-livereload": "^0.1.0",
-    "css-loader": "^4.2.1",
+    "css-loader": "^5.2.6",
+    "css-minimizer-webpack-plugin": "^3.0.0",
     "del": "^5.1.0",
     "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
@@ -62,12 +63,12 @@
     "gulp-babel": "^8.0.0",
     "jest": "^26.2.2",
     "jest-cli": "^26.2.2",
-    "mini-css-extract-plugin": "^0.9.0",
+    "mini-css-extract-plugin": "^1.6.0",
     "sass": "^1.26.10",
     "sass-loader": "^9.0.3",
     "wait-on": "^5.2.0",
-    "webpack": "^4.44.1",
-    "webpack-bundle-analyzer": "^3.8.0",
-    "webpack-nano": "^1.0.0"
+    "webpack": "^5.38.1",
+    "webpack-bundle-analyzer": "^4.4.2",
+    "webpack-cli": "^4.7.0"
   }
 }
