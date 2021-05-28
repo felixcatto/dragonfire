@@ -7,9 +7,14 @@ export default async app => {
 
   app.get('/users', { name: 'users' }, async () => getUsers(User));
 
-  app.get('/users/:id', { name: 'user' }, async request =>
-    User.query().findById(request.params.id)
-  );
+  app.get('/users/:id', { name: 'user' }, async (request, reply) => {
+    const { id } = request.params;
+    const user = await User.query().findById(id);
+    if (!user) {
+      return reply.code(400).send({ message: `User with id "${id}" not found` });
+    }
+    return user;
+  });
 
   app.post(
     '/users',

@@ -8,6 +8,9 @@ export const routes = makeUndefinedKeyError({
   editUser: '/users/:id/edit',
   articles: '/articles',
   tags: '/tags',
+  tag: '/tags/:id',
+  newTag: '/tags/new',
+  editTag: '/tags/:id/edit',
   projectStructure: '/structure',
   newSession: '/session/new',
 });

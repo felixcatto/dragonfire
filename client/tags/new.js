@@ -1,10 +1,11 @@
 import React from 'react';
-import Layout from '../common/layout';
 import Form from './form';
 
-export default ({ tag }) => (
-  <Layout>
+const Tag = () => (
+  <div>
     <h3>Create New Tag</h3>
-    <Form tag={tag} />
-  </Layout>
+    <Form />
+  </div>
 );
+
+export default Tag;

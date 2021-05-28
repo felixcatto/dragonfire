@@ -16,13 +16,17 @@ import Home from '../common/home';
 import Users from '../users/index';
 import NewUser from '../users/new';
 import EditUser from '../users/edit';
-import { makeUserActions, makeUsers } from '../users/usersSlice';
+import Tags from '../tags/index';
+import NewTag from '../tags/new';
+import EditTag from '../tags/edit';
+import { makeUsers, makeUserActions } from '../users/usersSlice';
 import LoginForm from '../common/session';
 import { makeSession, makeSessionActions } from '../common/sessionSlice';
+import { makeTags, makeTagActions } from '../tags/tagsSlice';
 
 const Provider = ({ initialState, children }) => {
   const { getApiUrl, currentUser } = initialState;
-  const actions = [makeUserActions, makeSessionActions].reduce(
+  const actions = [makeUserActions, makeSessionActions, makeTagActions].reduce(
     (acc, makeActions) => ({
       ...acc,
       ...makeActions({ getApiUrl }),
@@ -35,6 +39,7 @@ const Provider = ({ initialState, children }) => {
     ...initialState,
     actions,
     $users: initStore(makeUsers, '$users'),
+    $tags: initStore(makeTags, '$tags'),
     $session: makeSession(actions, {
       ...makeSessionInfo(currentUser),
       status: asyncStates.resolved,
@@ -89,10 +94,13 @@ const App = () => {
       <div className="container app__body">
         <Switch>
           <Route exact path={routes.home} component={Home} />
+          <Route exact path={routes.newSession} component={LoginForm} />
           <Route exact path={routes.users} component={Users} />
           <ProtectedRoute canRender={isAdmin} exact path={routes.newUser} component={NewUser} />
           <ProtectedRoute canRender={isAdmin} exact path={routes.editUser} component={EditUser} />
-          <Route exact path={routes.newSession} component={LoginForm} />
+          <Route exact path={routes.tags} component={Tags} />
+          <ProtectedRoute canRender={isSignedIn} exact path={routes.newTag} component={NewTag} />
+          <ProtectedRoute canRender={isSignedIn} exact path={routes.editTag} component={EditTag} />
         </Switch>
       </div>
     </div>

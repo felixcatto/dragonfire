@@ -5,7 +5,6 @@ import { ErrorMessage, Field, roles, emptyObject } from '../lib/utils';
 import { Formik, Form } from 'formik';
 import { getUrl } from '../lib/routes';
 import axios from 'axios';
-import { omit } from 'lodash';
 
 const UserForm = ({ user = emptyObject, method = 'post' }) => {
   const history = useHistory();
