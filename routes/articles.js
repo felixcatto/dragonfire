@@ -2,6 +2,8 @@ import { isEmpty, difference } from 'lodash';
 import comments from './comments';
 import { validate, checkSignedIn, checkBelongsToUser, isSignedIn } from '../lib/utils';
 
+export const getArticles = async Article => Article.query();
+
 export default async app => {
   const { Article } = app.objection;
 
@@ -10,9 +12,7 @@ export default async app => {
     return article.author_id;
   });
 
-  app.get('/articles', { name: 'articles' }, async () =>
-    Article.query().withGraphFetched('[author, tags]')
-  );
+  app.get('/articles', { name: 'articles' }, async () => getArticles(Article));
 
   app.get('/articles/:id', { name: 'article' }, async request =>
     Article.query().findById(request.params.id).withGraphFetched('[author, comments.author, tags]')

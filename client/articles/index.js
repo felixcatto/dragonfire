@@ -1,54 +1,99 @@
 import React from 'react';
-import Layout from '../common/layout';
-import { Link } from '../lib/utils';
+import { Link } from 'react-router-dom';
+import { useStore } from 'effector-react';
+import axios from 'axios';
+import { asyncStates } from '../lib/utils';
+import { useContext } from '../lib/context';
+import { getUrl } from '../lib/routes';
+import { loadArticlesData } from '../common/generalSlice';
 
-export default ({ getApiUrl, articles, isSignedIn, isBelongsToUser }) => (
-  <Layout>
-    <h3>Articles List</h3>
+const Articles = () => {
+  const {
+    $session,
+    $articles,
+    $users,
+    $tags,
+    $articlesTags,
+    $articlesList,
+    actions,
+    getApiUrl,
+  } = useContext();
 
-    {isSignedIn && (
-      <a href={getApiUrl('newArticle')} className="d-inline-block mb-30">
-        <button className="btn btn-primary">Create new article</button>
-      </a>
-    )}
+  const articles = useStore($articles);
+  const users = useStore($users);
+  const tags = useStore($tags);
+  const articlesTags = useStore($articlesTags);
+  const articlesList = useStore($articlesList);
+  // We can cache articlesList. (state, newState)  => newState === [] ? state : newState
+  // So we don't see pending -> resolved blink when article get deleted
+  const { isSignedIn, isBelongsToUser } = useStore($session);
+  console.log(articlesList);
 
-    <table className="table">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Text</th>
-          <th>Author</th>
-          <th>Tags</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {articles.map(article => (
-          <tr key={article.id}>
-            <td>{article.title}</td>
-            <td className="text-justify">{article.text}</td>
-            <td>{article.author?.name}</td>
-            <td>{article.tags.map(tag => tag.name).join(', ')}</td>
-            <td>
-              <div className="d-flex justify-content-end">
-                <a href={getApiUrl('article', { id: article.id })} className="mr-10">
-                  <button className="btn btn-sm btn-outline-primary">Show Article</button>
-                </a>
-                {isBelongsToUser(article.author_id) && (
-                  <>
-                    <a href={getApiUrl('editArticle', { id: article.id })} className="mr-10">
-                      <button className="btn btn-sm btn-outline-primary">Edit Article</button>
-                    </a>
-                    <Link href={getApiUrl('article', { id: article.id })} method="delete">
-                      <div className="btn btn-sm btn-outline-primary">Remove Article</div>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </td>
+  const deleteArticle = id => async () => {
+    await axios({ method: 'delete', url: getApiUrl('article', { id }) });
+    await actions.loadArticles();
+  };
+
+  React.useEffect(() => {
+    loadArticlesData({ articles, users, tags, articlesTags, actions });
+  }, []);
+
+  return (
+    <div>
+      <h3>Articles List</h3>
+
+      {isSignedIn && (
+        <Link to={getUrl('newArticle')} className="d-inline-block mb-30">
+          <button className="btn btn-primary">Create new article</button>
+        </Link>
+      )}
+
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Text</th>
+            <th>Author</th>
+            <th>Tags</th>
+            <th>Actions</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  </Layout>
-);
+        </thead>
+        <tbody>
+          {articlesList.map(article => (
+            <tr key={article.id}>
+              <td>{article.title}</td>
+              <td className="text-justify">{article.text}</td>
+              <td>{article.author?.name}</td>
+              <td>{article.tags.map(tag => tag.name).join(', ')}</td>
+              <td>
+                <div className="d-flex justify-content-end">
+                  <Link to={getUrl('article', { id: article.id })} className="mr-10">
+                    <button className="btn btn-sm btn-outline-primary">Show Article</button>
+                  </Link>
+                  {isBelongsToUser(article.author_id) && (
+                    <>
+                      <Link
+                        to={getUrl('editArticle', { id: article.id })}
+                        className="btn btn-sm btn-outline-primary mr-10"
+                      >
+                        Edit Article
+                      </Link>
+                      <div
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={deleteArticle(article.id)}
+                      >
+                        Remove Article
+                      </div>
+                    </>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Articles;

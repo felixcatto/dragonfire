@@ -16,17 +16,30 @@ import Home from '../common/home';
 import Users from '../users/index';
 import NewUser from '../users/new';
 import EditUser from '../users/edit';
+import { makeUsers, makeUserActions } from '../users/usersSlice';
+import Articles from '../articles/index';
+import { makeArticles, makeArticlesActions } from '../articles/articlesSlice';
 import Tags from '../tags/index';
 import NewTag from '../tags/new';
 import EditTag from '../tags/edit';
-import { makeUsers, makeUserActions } from '../users/usersSlice';
+import { makeTags, makeTagActions } from '../tags/tagsSlice';
 import LoginForm from '../common/session';
 import { makeSession, makeSessionActions } from '../common/sessionSlice';
-import { makeTags, makeTagActions } from '../tags/tagsSlice';
+import {
+  makeArticlesList,
+  makeArticlesTags,
+  makeArticlesTagsActions,
+} from '../common/generalSlice';
 
 const Provider = ({ initialState, children }) => {
   const { getApiUrl, currentUser } = initialState;
-  const actions = [makeUserActions, makeSessionActions, makeTagActions].reduce(
+  const actions = [
+    makeUserActions,
+    makeSessionActions,
+    makeTagActions,
+    makeArticlesActions,
+    makeArticlesTagsActions,
+  ].reduce(
     (acc, makeActions) => ({
       ...acc,
       ...makeActions({ getApiUrl }),
@@ -35,11 +48,20 @@ const Provider = ({ initialState, children }) => {
   );
   const initStore = (makeStore, key) =>
     has(initialState, key) ? makeStore(actions, initialState[key]) : makeStore(actions);
+
+  const $users = initStore(makeUsers, '$users');
+  const $tags = initStore(makeTags, '$tags');
+  const $articles = initStore(makeArticles, '$articles');
+  const $articlesTags = initStore(makeArticlesTags, '$articlesTags');
+  const $articlesList = makeArticlesList([$users, $articles, $tags, $articlesTags]);
   const store = {
     ...initialState,
     actions,
-    $users: initStore(makeUsers, '$users'),
-    $tags: initStore(makeTags, '$tags'),
+    $users,
+    $tags,
+    $articles,
+    $articlesTags,
+    $articlesList,
     $session: makeSession(actions, {
       ...makeSessionInfo(currentUser),
       status: asyncStates.resolved,
@@ -98,6 +120,7 @@ const App = () => {
           <Route exact path={routes.users} component={Users} />
           <ProtectedRoute canRender={isAdmin} exact path={routes.newUser} component={NewUser} />
           <ProtectedRoute canRender={isAdmin} exact path={routes.editUser} component={EditUser} />
+          <Route exact path={routes.articles} component={Articles} />
           <Route exact path={routes.tags} component={Tags} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.newTag} component={NewTag} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.editTag} component={EditTag} />

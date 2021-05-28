@@ -59,8 +59,11 @@ const Users = () => {
               {isAdmin && (
                 <td>
                   <div className="d-flex justify-content-end">
-                    <Link to={getUrl('editUser', { id: user.id })} className="mr-10">
-                      <button className="btn btn-sm btn-outline-primary">Edit user</button>
+                    <Link
+                      to={getUrl('editUser', { id: user.id })}
+                      className="btn btn-sm btn-outline-primary mr-10"
+                    >
+                      Edit user
                     </Link>
                     <div className="btn btn-sm btn-outline-primary" onClick={deleteUser(user.id)}>
                       Remove user

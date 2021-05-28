@@ -47,8 +47,11 @@ const Tags = () => {
               {isSignedIn && (
                 <td>
                   <div className="d-flex justify-content-end">
-                    <Link to={getUrl('editTag', { id: tag.id })} className="mr-10">
-                      <button className="btn btn-sm btn-outline-primary">Edit Tag</button>
+                    <Link
+                      to={getUrl('editTag', { id: tag.id })}
+                      className="btn btn-sm btn-outline-primary mr-10"
+                    >
+                      Edit Tag
                     </Link>
                     <div className="btn btn-sm btn-outline-primary" onClick={deleteTag(tag.id)}>
                       Remove Tag
