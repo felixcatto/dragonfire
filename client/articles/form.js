@@ -1,43 +1,80 @@
 import React from 'react';
-import Context from '../lib/context';
-import { Error } from '../lib/utils';
-import TagsSelect from '../components/tagsSelect';
+import { Link, useHistory } from 'react-router-dom';
+import { useContext } from '../lib/context';
+import { ErrorMessage, Field, emptyObject, asyncStates, MultiSelect } from '../lib/utils';
+import { useStore } from 'effector-react';
+import { Formik, Form } from 'formik';
+import { getUrl } from '../lib/routes';
+import axios from 'axios';
 
-export default ({ article, tags, method = 'post' }) => {
-  const { getApiUrl } = React.useContext(Context);
-  const action = method === 'put' ? getApiUrl('article', { id: article.id }) : getApiUrl('articles');
+export default ({ article = emptyObject, type = 'add' }) => {
+  const history = useHistory();
+  const { getApiUrl, $tags, actions } = useContext();
+  const tags = useStore($tags);
+
+  React.useEffect(() => {
+    if (tags.status === asyncStates.idle) {
+      actions.loadTags();
+    }
+  }, []);
+
+  if (tags.status !== asyncStates.resolved) return null;
 
   const transformTag = tag => ({ value: tag.id, label: tag.name });
-  const tagsForSelect = tags.map(transformTag);
-  const selectedTags = article.tags?.map?.(transformTag);
+  const tagsForSelect = tags.data.map(transformTag);
+  const articleTags = article.tags || [];
+  const selectedTags = articleTags.map(transformTag);
+
+  const onSubmit = async (values, fmActions) => {
+    try {
+      if (type === 'add') {
+        const { data: newArticle } = await actions.addArticle(values);
+        actions.relateArticleWithTags({ articleId: newArticle.id, tagIds: values.tagIds, type });
+      } else {
+        await actions.editArticle();
+      }
+      history.push(getUrl('articles'));
+    } catch (e) {
+      fmActions.setStatus({ apiErrors: e.response.data.errors });
+    }
+  };
 
   return (
-    <form action={action} method="post">
-      <input type="hidden" name="_method" value={method} />
-      <div className="row mb-20">
-        <div className="col-6">
-          <div className="mb-15">
-            <label>Title</label>
-            <input type="text" className="form-control" name="title" defaultValue={article.title} />
-            <Error entity={article} path="title" />
-          </div>
-          <div className="mb-15">
-            <label>Text</label>
-            <textarea className="form-control" name="text" defaultValue={article.text} />
-          </div>
-          <div className="mb-0">
-            <label>Tags</label>
-            <TagsSelect tags={tagsForSelect} selectedTags={selectedTags} />
+    <Formik
+      initialValues={{
+        title: article.title,
+        text: article.text,
+        tagIds: articleTags.map(tag => tag.id),
+      }}
+      onSubmit={onSubmit}
+      initialStatus={{ apiErrors: {} }}
+    >
+      <Form>
+        <div className="row mb-20">
+          <div className="col-6">
+            <div className="mb-15">
+              <label>Title</label>
+              <Field className="form-control" name="title" />
+              <ErrorMessage name="title" />
+            </div>
+            <div className="mb-15">
+              <label>Text</label>
+              <Field className="form-control" as="textarea" name="text" />
+            </div>
+            <div className="mb-0">
+              <label>Tags</label>
+              <MultiSelect name="tagIds" defaultValue={selectedTags} options={tagsForSelect} />
+            </div>
           </div>
         </div>
-      </div>
 
-      <a href={getApiUrl('articles')} className="mr-10">
-        Back
-      </a>
-      <button className="btn btn-primary" type="submit">
-        Save
-      </button>
-    </form>
+        <Link to={getUrl('articles')} className="mr-10">
+          Back
+        </Link>
+        <button className="btn btn-primary" type="submit">
+          Save
+        </button>
+      </Form>
+    </Formik>
   );
 };

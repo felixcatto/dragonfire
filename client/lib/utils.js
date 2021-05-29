@@ -4,6 +4,7 @@ import { compile } from 'path-to-regexp';
 import { isFunction } from 'lodash';
 import produce from 'immer';
 import { useFormikContext, getIn } from 'formik';
+import Select from 'react-select';
 import { roles } from '../../lib/sharedUtils';
 import { omit } from 'lodash';
 
@@ -37,6 +38,18 @@ export const Field = props => {
   };
 
   return React.createElement(asElement, { ...restProps, onChange, onBlur, value }, children);
+};
+
+export const MultiSelect = ({ name, defaultValue, options }) => {
+  const { setFieldValue } = useFormikContext();
+  return (
+    <Select
+      defaultValue={defaultValue}
+      onChange={values => setFieldValue(name, values?.map(option => option.value) || [], false)}
+      options={options}
+      isMulti
+    />
+  );
 };
 
 export const userRolesToIcons = {

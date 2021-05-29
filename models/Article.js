@@ -59,13 +59,7 @@ export class Article extends Model {
     return y.object({
       title: y.string().required('required'),
       text: y.string(),
-      tagIds: y
-        .array()
-        .transform(
-          (value, originalValue) =>
-            (isString(originalValue) ? [originalValue] : originalValue) |> compact
-        )
-        .default([]),
+      tagIds: y.array().default([]),
     });
   }
 }

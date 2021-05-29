@@ -18,6 +18,7 @@ import NewUser from '../users/new';
 import EditUser from '../users/edit';
 import { makeUsers, makeUserActions } from '../users/usersSlice';
 import Articles from '../articles/index';
+import NewArticle from '../articles/new';
 import { makeArticles, makeArticlesActions } from '../articles/articlesSlice';
 import Tags from '../tags/index';
 import NewTag from '../tags/new';
@@ -121,6 +122,12 @@ const App = () => {
           <ProtectedRoute canRender={isAdmin} exact path={routes.newUser} component={NewUser} />
           <ProtectedRoute canRender={isAdmin} exact path={routes.editUser} component={EditUser} />
           <Route exact path={routes.articles} component={Articles} />
+          <ProtectedRoute
+            canRender={isSignedIn}
+            exact
+            path={routes.newArticle}
+            component={NewArticle}
+          />
           <Route exact path={routes.tags} component={Tags} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.newTag} component={NewTag} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.editTag} component={EditTag} />

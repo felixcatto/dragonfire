@@ -24,15 +24,10 @@ const Articles = () => {
   const tags = useStore($tags);
   const articlesTags = useStore($articlesTags);
   const articlesList = useStore($articlesList);
-  // We can cache articlesList. (state, newState)  => newState === [] ? state : newState
-  // So we don't see pending -> resolved blink when article get deleted
   const { isSignedIn, isBelongsToUser } = useStore($session);
   console.log(articlesList);
 
-  const deleteArticle = id => async () => {
-    await axios({ method: 'delete', url: getApiUrl('article', { id }) });
-    await actions.loadArticles();
-  };
+  const deleteArticle = id => async () => actions.removeArticle(id);
 
   React.useEffect(() => {
     loadArticlesData({ articles, users, tags, articlesTags, actions });

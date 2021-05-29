@@ -32,7 +32,7 @@ export default async app => {
         await Promise.all(tagIds.map(tagId => article.$relatedQuery('tags').relate(tagId)));
       }
 
-      reply.code(201).send({ id: article.id });
+      reply.code(201).send(article);
     }
   );
 
