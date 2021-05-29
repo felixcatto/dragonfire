@@ -48,8 +48,8 @@ export const makeArticlesTags = (
   }
 ) =>
   createStore(initialState)
-    .on(actions.loadArticlesTags, () => ({
-      data: [],
+    .on(actions.loadArticlesTags, (state) => ({
+      data: state.data,
       status: asyncStates.pending,
       errors: null,
     }))

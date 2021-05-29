@@ -15,8 +15,8 @@ export const makeUsers = (
   }
 ) =>
   createStore(initialState)
-    .on(actions.loadUsers, () => ({
-      data: [],
+    .on(actions.loadUsers, (state) => ({
+      data: state.data,
       status: asyncStates.pending,
       errors: null,
     }))

@@ -15,8 +15,8 @@ export const makeTags = (
   }
 ) =>
   createStore(initialState)
-    .on(actions.loadTags, () => ({
-      data: [],
+    .on(actions.loadTags, (state) => ({
+      data: state.data,
       status: asyncStates.pending,
       errors: null,
     }))

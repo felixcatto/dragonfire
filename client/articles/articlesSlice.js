@@ -15,8 +15,8 @@ export const makeArticles = (
   }
 ) =>
   createStore(initialState)
-    .on(actions.loadArticles, () => ({
-      data: [],
+    .on(actions.loadArticles, (state) => ({
+      data: state.data,
       status: asyncStates.pending,
       errors: null,
     }))
