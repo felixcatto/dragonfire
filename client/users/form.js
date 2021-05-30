@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { Formik, Form } from 'formik';
 import { useContext } from '../lib/context';
 import { ErrorMessage, Field, roles, emptyObject } from '../lib/utils';
-import { Formik, Form } from 'formik';
 import { getUrl } from '../lib/routes';
 
 const UserForm = ({ user = emptyObject, type = 'add' }) => {

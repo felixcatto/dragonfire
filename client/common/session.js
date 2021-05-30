@@ -3,10 +3,10 @@ import { Link, useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { useContext } from '../lib/context';
 import { getUrl } from '../lib/routes';
-import { ErrorMessage, Field, emptyObject } from '../lib/utils';
+import { ErrorMessage, Field } from '../lib/utils';
 
 const LoginForm = () => {
-  const { getApiUrl, actions } = useContext();
+  const { actions } = useContext();
   const history = useHistory();
 
   const onSubmit = async (values, fmActions) => {

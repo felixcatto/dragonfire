@@ -5,7 +5,7 @@ import '../css/index.scss';
 import App from './app';
 import { makeUrlFor } from '../lib/utils';
 
-const { routes, currentUser } = window.INITIAL_STATE;
+const { routes } = window.INITIAL_STATE;
 window.INITIAL_STATE.getApiUrl = makeUrlFor(routes);
 
 hydrate(

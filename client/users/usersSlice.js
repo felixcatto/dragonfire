@@ -1,4 +1,4 @@
-import { createStore, createEvent, createEffect } from 'effector';
+import { createStore, createEffect } from 'effector';
 import { asyncStates } from '../lib/utils';
 
 export const makeUserActions = ({ getApiUrl, axios }) => ({

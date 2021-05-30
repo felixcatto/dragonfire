@@ -58,7 +58,7 @@ export const makeArticlesTags = (
       errors: null,
     }))
     .on(actions.addArticle.done, (state, { result: article }) => {
-      console.log(article)
+      console.log(article);
       const { id: articleId, tagIds } = article;
       return {
         ...state,

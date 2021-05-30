@@ -1,5 +1,5 @@
 $i: 50;
-@while  $i >= 0 {
+@while $i >= 0 {
   .mb-#{$i} {
     margin-bottom: $i + px !important;
   }

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 import { useParams } from 'react-router-dom';
+import { isEmpty } from 'lodash';
 import { useContext } from '../lib/context';
 import Form from './form';
 import { emptyObject, useImmerState } from '../lib/utils';
-import { isEmpty } from 'lodash';
 
 const EditUser = () => {
   const { getApiUrl, axios, $users } = useContext();

@@ -45,7 +45,7 @@ const common = {
   },
   plugins: [new MiniCssExtractPlugin({ filename: '../css/index.css' })],
   optimization: {
-    minimizer: [`...`, new CssMinimizerPlugin()],
+    minimizer: ['...', new CssMinimizerPlugin()],
   },
   stats: { warnings: false, children: false, modules: false },
 };

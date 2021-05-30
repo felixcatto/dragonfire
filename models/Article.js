@@ -1,7 +1,6 @@
 import path from 'path';
 import { Model } from 'objection';
 import * as y from 'yup';
-import { isString, compact } from 'lodash';
 
 export class Article extends Model {
   static get tableName() {

@@ -1,11 +1,11 @@
-import { createStore, createEvent, createEffect } from 'effector';
+import { createStore, createEffect } from 'effector';
 import { asyncStates, makeSessionInfo } from '../lib/utils';
 
 export const makeSessionActions = ({ getApiUrl, axios }) => ({
   signIn: createEffect(async userCredentials =>
     axios({ method: 'post', url: getApiUrl('session'), data: userCredentials })
   ),
-  signOut: createEffect(async userCredentials =>
+  signOut: createEffect(async () =>
     axios({ method: 'delete', url: getApiUrl('session') })
   ),
 });

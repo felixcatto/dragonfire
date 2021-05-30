@@ -36,6 +36,7 @@ rules:
     - objects: only-multiline
       arrays: only-multiline
       functions: ignore
+      imports: only-multiline
   no-param-reassign:
     - error
     - props: false
@@ -46,5 +47,6 @@ rules:
     - error
     - ignoreComments: true
       code: 100
+  camelcase: off
   react/prop-types: 0
   react/display-name: 1

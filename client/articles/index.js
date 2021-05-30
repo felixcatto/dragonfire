@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from 'effector-react';
-import { asyncStates } from '../lib/utils';
 import { useContext } from '../lib/context';
 import { getUrl } from '../lib/routes';
 import { loadArticlesData } from '../common/generalSlice';

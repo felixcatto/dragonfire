@@ -83,7 +83,7 @@ const Provider = ({ initialState, children }) => {
 
 const App = () => {
   const store = useContext();
-  const { $session, actions, getApiUrl } = store;
+  const { $session, actions } = store;
   const { currentUser, isSignedIn, isAdmin } = useStore($session);
   const userIconClass = role => cn('app__user-role-icon mr-5', userRolesToIcons[role]);
 

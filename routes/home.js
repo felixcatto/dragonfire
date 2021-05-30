@@ -2,9 +2,9 @@ import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
-import { clearCache, supressConsoleLog, isSignedIn, isAdmin, isBelongsToUser } from '../lib/utils';
+import { clearCache, supressConsoleLog } from '../lib/utils';
 import routesInitialData from '../lib/routesInitialData';
-import '../client/main/app.js';
+import '../client/main/app';
 
 export default async app => {
   app.all('/api/*', async (request, reply) => {

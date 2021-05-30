@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useContext } from '../lib/context';
-import { ErrorMessage, Field, emptyObject, asyncStates, MultiSelect } from '../lib/utils';
 import { useStore } from 'effector-react';
 import { Formik, Form } from 'formik';
+import { useContext } from '../lib/context';
+import { ErrorMessage, Field, emptyObject, asyncStates, MultiSelect } from '../lib/utils';
 import { getUrl } from '../lib/routes';
 
 export default ({ article = emptyObject, type = 'add' }) => {
   const history = useHistory();
-  const { getApiUrl, $tags, actions } = useContext();
+  const { $tags, actions } = useContext();
   const tags = useStore($tags);
 
   React.useEffect(() => {

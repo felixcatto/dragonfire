@@ -8,6 +8,4 @@ const NewArticle = () => (
   </div>
 );
 
-
-
 export default NewArticle;

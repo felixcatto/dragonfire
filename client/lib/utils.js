@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { NavLink as RouterNavLink, Route } from 'react-router-dom';
 import { compile } from 'path-to-regexp';
-import { isFunction } from 'lodash';
+import { isFunction, omit } from 'lodash';
 import produce from 'immer';
 import { useFormikContext, getIn } from 'formik';
 import Select from 'react-select';
 import { roles } from '../../lib/sharedUtils';
-import { omit } from 'lodash';
 
 export * from '../../lib/sharedUtils';
 
