@@ -3,6 +3,7 @@ import { Switch, Route, Link } from 'react-router-dom';
 import cn from 'classnames';
 import { has } from 'lodash';
 import { useStore } from 'effector-react';
+import originalAxios from 'axios';
 import Context, { useContext } from '../lib/context';
 import {
   userRolesToIcons,
@@ -33,6 +34,12 @@ import {
 } from '../common/generalSlice';
 
 const Provider = ({ initialState, children }) => {
+  const axios = originalAxios.create();
+  axios.interceptors.response.use(
+    response => response.data,
+    error => Promise.reject(error)
+  );
+
   const { getApiUrl, currentUser } = initialState;
   const actions = [
     makeUserActions,
@@ -43,7 +50,7 @@ const Provider = ({ initialState, children }) => {
   ].reduce(
     (acc, makeActions) => ({
       ...acc,
-      ...makeActions({ getApiUrl }),
+      ...makeActions({ getApiUrl, axios }),
     }),
     {}
   );
@@ -57,6 +64,7 @@ const Provider = ({ initialState, children }) => {
   const $articlesList = makeArticlesList([$users, $articles, $tags, $articlesTags]);
   const store = {
     ...initialState,
+    axios,
     actions,
     $users,
     $tags,

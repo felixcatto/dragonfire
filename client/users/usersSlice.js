@@ -1,8 +1,7 @@
 import { createStore, createEvent, createEffect } from 'effector';
-import axios from 'axios';
 import { asyncStates } from '../lib/utils';
 
-export const makeUserActions = ({ getApiUrl }) => ({
+export const makeUserActions = ({ getApiUrl, axios }) => ({
   loadUsers: createEffect(async () => axios.get(getApiUrl('users'))),
 });
 
@@ -15,13 +14,13 @@ export const makeUsers = (
   }
 ) =>
   createStore(initialState)
-    .on(actions.loadUsers, (state) => ({
+    .on(actions.loadUsers, state => ({
       data: state.data,
       status: asyncStates.pending,
       errors: null,
     }))
-    .on(actions.loadUsers.done, (state, payload) => ({
-      data: payload.result.data,
+    .on(actions.loadUsers.done, (state, { result }) => ({
+      data: result,
       status: asyncStates.resolved,
       errors: null,
     }));

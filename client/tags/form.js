@@ -4,11 +4,10 @@ import { useContext } from '../lib/context';
 import { ErrorMessage, Field,  emptyObject } from '../lib/utils';
 import { Formik, Form } from 'formik';
 import { getUrl } from '../lib/routes';
-import axios from 'axios';
 
 export default ({ tag = emptyObject, method = 'post' }) => {
   const history = useHistory();
-  const { getApiUrl, actions } = useContext();
+  const { getApiUrl, axios, actions } = useContext();
 
   const onSubmit = async (values, fmActions) => {
     const url = method === 'put' ? getApiUrl('tag', { id: tag.id }) : getApiUrl('tags');

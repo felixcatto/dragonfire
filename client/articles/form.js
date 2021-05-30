@@ -5,7 +5,6 @@ import { ErrorMessage, Field, emptyObject, asyncStates, MultiSelect } from '../l
 import { useStore } from 'effector-react';
 import { Formik, Form } from 'formik';
 import { getUrl } from '../lib/routes';
-import axios from 'axios';
 
 export default ({ article = emptyObject, type = 'add' }) => {
   const history = useHistory();
@@ -28,7 +27,7 @@ export default ({ article = emptyObject, type = 'add' }) => {
   const onSubmit = async (values, fmActions) => {
     try {
       if (type === 'add') {
-        const { data: newArticle } = await actions.addArticle(values);
+        const newArticle = await actions.addArticle(values);
         actions.relateArticleWithTags({ articleId: newArticle.id, tagIds: values.tagIds, type });
       } else {
         await actions.editArticle();

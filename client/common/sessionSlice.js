@@ -1,8 +1,7 @@
 import { createStore, createEvent, createEffect } from 'effector';
-import axios from 'axios';
 import { asyncStates, makeSessionInfo } from '../lib/utils';
 
-export const makeSessionActions = ({ getApiUrl }) => ({
+export const makeSessionActions = ({ getApiUrl, axios }) => ({
   signIn: createEffect(async userCredentials =>
     axios({ method: 'post', url: getApiUrl('session'), data: userCredentials })
   ),
@@ -28,11 +27,13 @@ export const makeSession = (
       status: asyncStates.pending,
       errors: null,
     }))
-    .on(actions.signIn.done, (state, payload) => {
-      const currentUser = payload.result.data;
-      return { ...makeSessionInfo(currentUser), status: asyncStates.resolved, errors: null };
-    })
-    .on(actions.signOut.done, (state, payload) => {
-      const currentUser = payload.result.data;
-      return { ...makeSessionInfo(currentUser), status: asyncStates.resolved, errors: null };
-    });
+    .on(actions.signIn.done, (state, { result: currentUser }) => ({
+      ...makeSessionInfo(currentUser),
+      status: asyncStates.resolved,
+      errors: null,
+    }))
+    .on(actions.signOut.done, (state, { result: currentUser }) => ({
+      ...makeSessionInfo(currentUser),
+      status: asyncStates.resolved,
+      errors: null,
+    }));

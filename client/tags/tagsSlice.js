@@ -1,8 +1,7 @@
 import { createStore, createEffect } from 'effector';
-import axios from 'axios';
 import { asyncStates } from '../lib/utils';
 
-export const makeTagActions = ({ getApiUrl }) => ({
+export const makeTagActions = ({ getApiUrl, axios }) => ({
   loadTags: createEffect(async () => axios.get(getApiUrl('tags'))),
 });
 
@@ -20,8 +19,8 @@ export const makeTags = (
       status: asyncStates.pending,
       errors: null,
     }))
-    .on(actions.loadTags.done, (state, payload) => ({
-      data: payload.result.data,
+    .on(actions.loadTags.done, (state, { result }) => ({
+      data: result,
       status: asyncStates.resolved,
       errors: null,
     }));

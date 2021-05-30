@@ -1,5 +1,4 @@
 import { combine, createEffect, createStore, createEvent } from 'effector';
-import axios from 'axios';
 import { asyncStates } from '../lib/utils';
 
 export const loadArticlesData = async ({ articles, users, tags, articlesTags, actions }) =>
@@ -35,7 +34,7 @@ export const makeArticlesList = stores =>
     }));
   });
 
-export const makeArticlesTagsActions = ({ getApiUrl }) => ({
+export const makeArticlesTagsActions = ({ getApiUrl, axios }) => ({
   loadArticlesTags: createEffect(async () => axios.get(getApiUrl('articlesTags'))),
   relateArticleWithTags: createEvent(),
 });
@@ -54,8 +53,8 @@ export const makeArticlesTags = (
       status: asyncStates.pending,
       errors: null,
     }))
-    .on(actions.loadArticlesTags.done, (state, payload) => ({
-      data: payload.result.data,
+    .on(actions.loadArticlesTags.done, (state, { result }) => ({
+      data: result,
       status: asyncStates.resolved,
       errors: null,
     }))

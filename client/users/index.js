@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import { useStore } from 'effector-react';
-import axios from 'axios';
 import { userRolesToIcons, asyncStates } from '../lib/utils';
 import { useContext } from '../lib/context';
 import { getUrl } from '../lib/routes';
@@ -10,7 +9,7 @@ import { getUrl } from '../lib/routes';
 const userIconClass = role => cn('mr-5', userRolesToIcons[role]);
 
 const Users = () => {
-  const { $session, $users, actions, getApiUrl } = useContext();
+  const { axios, $session, $users, actions, getApiUrl } = useContext();
   const users = useStore($users);
   const { isAdmin } = useStore($session);
   console.log(users);

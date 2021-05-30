@@ -1,14 +1,13 @@
 import React from 'react';
 import { useStore } from 'effector-react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { useContext } from '../lib/context';
 import Form from './form';
 import { emptyObject, useImmerState } from '../lib/utils';
 import { isEmpty } from 'lodash';
 
 const EditUser = () => {
-  const { getApiUrl, $users } = useContext();
+  const { getApiUrl, axios, $users } = useContext();
   const { id } = useParams();
   const { data: users } = useStore($users);
   const [state, setState] = useImmerState({
@@ -19,7 +18,7 @@ const EditUser = () => {
   React.useEffect(() => {
     if (isEmpty(user)) {
       axios({ url: getApiUrl('user', { id }) })
-        .then(({ data }) => setState({ user: data }))
+        .then(data => setState({ user: data }))
         .catch(({ response }) => console.log(response));
     }
   }, []);

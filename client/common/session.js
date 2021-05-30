@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
-import axios from 'axios';
 import { useContext } from '../lib/context';
 import { getUrl } from '../lib/routes';
 import { ErrorMessage, Field, emptyObject } from '../lib/utils';

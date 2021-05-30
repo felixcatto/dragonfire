@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from 'effector-react';
-import axios from 'axios';
 import { asyncStates } from '../lib/utils';
 import { useContext } from '../lib/context';
 import { getUrl } from '../lib/routes';
 
 const Tags = () => {
-  const { $session, $tags, actions, getApiUrl } = useContext();
+  const { axios, $session, $tags, actions, getApiUrl } = useContext();
   const tags = useStore($tags);
   const { isSignedIn } = useStore($session);
   console.log(tags);
