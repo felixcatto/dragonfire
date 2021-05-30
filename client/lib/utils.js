@@ -114,3 +114,20 @@ export const emptyObject = new Proxy(
 
 export const ProtectedRoute = ({ canRender, ...restProps }) =>
   canRender ? <Route {...restProps} /> : '403 forbidden';
+
+export const qb = mainRow => ({
+  rowToMany(joinTable, targetTable, joinClause) {
+    const [mainRowId, joinTableMainId, joinTableTargetId, targetTableId] = joinClause
+      .replace(/\s/, '')
+      .split(/,|=/);
+    return joinTable
+      .filter(row => row[joinTableMainId] === mainRow[mainRowId])
+      .flatMap(row =>
+        targetTable.filter(targetRow => targetRow[targetTableId] === row[joinTableTargetId])
+      );
+  },
+  rowToOne(targetTable, joinClause) {
+    const [mainRowId, targetTableId] = joinClause.replace(/\s/, '').split('=');
+    return targetTable.find(targetRow => targetRow[targetTableId] === mainRow[mainRowId]);
+  },
+});

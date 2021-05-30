@@ -20,6 +20,7 @@ import EditUser from '../users/edit';
 import { makeUsers, makeUserActions } from '../users/usersSlice';
 import Articles from '../articles/index';
 import NewArticle from '../articles/new';
+import EditArticle from '../articles/edit';
 import { makeArticles, makeArticlesActions } from '../articles/articlesSlice';
 import Tags from '../tags/index';
 import NewTag from '../tags/new';
@@ -136,6 +137,7 @@ const App = () => {
             path={routes.newArticle}
             component={NewArticle}
           />
+          <ProtectedRoute canRender={true} exact path={routes.editArticle} component={EditArticle} />
           <Route exact path={routes.tags} component={Tags} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.newTag} component={NewTag} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.editTag} component={EditTag} />

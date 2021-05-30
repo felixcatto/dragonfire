@@ -1,5 +1,5 @@
 import { combine, createEffect, createStore } from 'effector';
-import { asyncStates } from '../lib/utils';
+import { asyncStates, qb } from '../lib/utils';
 
 export const loadArticlesData = async ({ articles, users, tags, articlesTags, actions }) =>
   Promise.all(
@@ -27,10 +27,8 @@ export const makeArticlesList = stores =>
 
     return articlesList.map(article => ({
       ...article,
-      author: usersList.find(user => user.id === article.author_id),
-      tags: articlesTagsList
-        .filter(({ article_id }) => article_id === article.id)
-        .flatMap(({ tag_id }) => tagsList.filter(tag => tag.id === tag_id)),
+      author: qb(article).rowToOne(usersList, 'author_id=id'),
+      tags: qb(article).rowToMany(articlesTagsList, tagsList, 'id=article_id, tag_id=id'),
     }));
   });
 
@@ -58,11 +56,20 @@ export const makeArticlesTags = (
       errors: null,
     }))
     .on(actions.addArticle.done, (state, { result: article }) => {
-      console.log(article);
       const { id: articleId, tagIds } = article;
       return {
         ...state,
         data:
           tagIds.map(tag_id => ({ article_id: articleId, tag_id })) |> (v => state.data.concat(v)),
       };
+    })
+    .on(actions.editArticle.done, (state, { result: article }) => {
+      const { id: articleId, tagIds } = article;
+      const articleTagsList = tagIds.map(tag_id => ({ article_id: articleId, tag_id }));
+      const data = state.data.filter(el => el.article_id !== articleId).concat(articleTagsList);
+      return { ...state, data };
+    })
+    .on(actions.deleteTag.done, (state, { result }) => {
+      const deletedTagId = +result.id;
+      return { ...state, data: state.data.filter(({ tag_id }) => tag_id !== deletedTagId) };
     });

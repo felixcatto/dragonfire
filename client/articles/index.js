@@ -4,6 +4,7 @@ import { useStore } from 'effector-react';
 import { useContext } from '../lib/context';
 import { getUrl } from '../lib/routes';
 import { loadArticlesData } from '../common/generalSlice';
+import { asyncStates } from '../lib/utils';
 
 const Articles = () => {
   const {
@@ -22,13 +23,17 @@ const Articles = () => {
   const articlesTags = useStore($articlesTags);
   const articlesList = useStore($articlesList);
   const { isSignedIn, isBelongsToUser } = useStore($session);
-  console.log(articlesList);
-
-  const deleteArticle = id => async () => actions.removeArticle(id);
 
   React.useEffect(() => {
     loadArticlesData({ articles, users, tags, articlesTags, actions });
   }, []);
+
+  if ([users, articles, tags, articlesTags].some(el => el.status !== asyncStates.resolved)) {
+    return null;
+  }
+  console.log(articlesList);
+
+  const deleteArticle = id => async () => actions.deleteArticle(id);
 
   return (
     <div>

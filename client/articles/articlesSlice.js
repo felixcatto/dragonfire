@@ -1,4 +1,5 @@
 import { createStore, createEffect } from 'effector';
+import produce from 'immer';
 import { asyncStates } from '../lib/utils';
 
 export const makeArticlesActions = ({ getApiUrl, axios }) => ({
@@ -7,10 +8,11 @@ export const makeArticlesActions = ({ getApiUrl, axios }) => ({
     const article = await axios.post(getApiUrl('articles'), values);
     return { ...article, tagIds: values.tagIds };
   }),
-  editArticle: createEffect(async ({ id, values }) =>
-    axios.put(getApiUrl('article', { id }), values)
-  ),
-  removeArticle: createEffect(async id => axios.delete(getApiUrl('article', { id }))),
+  editArticle: createEffect(async ({ id, values }) => {
+    const article = await axios.put(getApiUrl('article', { id }), values);
+    return { ...article, tagIds: values.tagIds };
+  }),
+  deleteArticle: createEffect(async id => axios.delete(getApiUrl('article', { id }))),
 });
 
 export const makeArticles = (
@@ -40,7 +42,17 @@ export const makeArticles = (
       ...state,
       data: state.data.filter(el => el.id !== article.id).concat(article),
     }))
-    .on(actions.removeArticle.done, (state, { result }) => ({
+    .on(actions.deleteArticle.done, (state, { result }) => ({
       ...state,
       data: state.data.filter(el => el.id !== +result.id),
-    }));
+    }))
+    .on(actions.deleteUser.done, (state, { result }) => {
+      const deletedUserId = +result.id;
+      const data = produce(state.data, i => {
+        i.forEach(article => {
+          article.author_id = article.author_id === deletedUserId ? null : article.author_id;
+        });
+      });
+
+      return { ...state, data };
+    });
