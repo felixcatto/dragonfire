@@ -20,8 +20,8 @@ export default async app => {
     '/tags',
     { preHandler: [checkSignedIn, validate(Tag.yupSchema)] },
     async (request, reply) => {
-      const { id } = await Tag.query().insert(request.data);
-      reply.code(201).send({ id });
+      const tag = await Tag.query().insert(request.data);
+      reply.code(201).send(tag);
     }
   );
 
@@ -29,8 +29,8 @@ export default async app => {
     '/tags/:id',
     { preHandler: [checkSignedIn, validate(Tag.yupSchema)] },
     async (request, reply) => {
-      await Tag.query().update(request.data).where('id', request.params.id);
-      reply.code(201).send({ id: request.params.id });
+      const tag = await Tag.query().updateAndFetchById(request.params.id, request.data);
+      reply.code(201).send(tag);
     }
   );
 

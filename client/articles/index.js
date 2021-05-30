@@ -15,7 +15,6 @@ const Articles = () => {
     $articlesTags,
     $articlesList,
     actions,
-    getApiUrl,
   } = useContext();
 
   const articles = useStore($articles);

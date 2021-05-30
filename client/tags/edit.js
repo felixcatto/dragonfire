@@ -26,7 +26,7 @@ const EditTag = () => {
   return (
     <div>
       <h3>Edit Tag</h3>
-      {!isEmpty(tag) && <Form method="put" tag={tag} />}
+      {!isEmpty(tag) && <Form type="edit" tag={tag} />}
     </div>
   );
 };

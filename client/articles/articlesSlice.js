@@ -3,7 +3,13 @@ import { asyncStates } from '../lib/utils';
 
 export const makeArticlesActions = ({ getApiUrl, axios }) => ({
   loadArticles: createEffect(async () => axios.get(getApiUrl('articles'))),
-  addArticle: createEffect(async values => axios.post(getApiUrl('articles'), values)),
+  addArticle: createEffect(async values => {
+    const article = await axios.post(getApiUrl('articles'), values);
+    return { ...article, tagIds: values.tagIds };
+  }),
+  editArticle: createEffect(async ({ id, values }) =>
+    axios.put(getApiUrl('article', { id }), values)
+  ),
   removeArticle: createEffect(async id => axios.delete(getApiUrl('article', { id }))),
 });
 
@@ -29,6 +35,10 @@ export const makeArticles = (
     .on(actions.addArticle.done, (state, { result: article }) => ({
       ...state,
       data: state.data.concat(article),
+    }))
+    .on(actions.editArticle.done, (state, { result: article }) => ({
+      ...state,
+      data: state.data.filter(el => el.id !== article.id).concat(article),
     }))
     .on(actions.removeArticle.done, (state, { result }) => ({
       ...state,

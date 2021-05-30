@@ -26,7 +26,7 @@ const EditUser = () => {
   return (
     <div>
       <h3>Edit User</h3>
-      {!isEmpty(user) && <Form method="put" user={user} />}
+      {!isEmpty(user) && <Form type="edit" user={user} />}
     </div>
   );
 };

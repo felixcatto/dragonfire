@@ -5,15 +5,17 @@ import { ErrorMessage, Field, roles, emptyObject } from '../lib/utils';
 import { Formik, Form } from 'formik';
 import { getUrl } from '../lib/routes';
 
-const UserForm = ({ user = emptyObject, method = 'post' }) => {
+const UserForm = ({ user = emptyObject, type = 'add' }) => {
   const history = useHistory();
-  const { getApiUrl, axios, actions } = useContext();
+  const { actions } = useContext();
 
   const onSubmit = async (values, fmActions) => {
-    const url = method === 'put' ? getApiUrl('user', { id: user.id }) : getApiUrl('users');
     try {
-      await axios({ method, url, data: values });
-      await actions.loadUsers();
+      if (type === 'add') {
+        await actions.addUser(values);
+      } else {
+        await actions.editUser({ id: user.id, values });
+      }
       history.push(getUrl('users'));
     } catch (e) {
       fmActions.setStatus({ apiErrors: e.response.data.errors });

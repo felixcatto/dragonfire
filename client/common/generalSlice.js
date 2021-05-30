@@ -1,4 +1,4 @@
-import { combine, createEffect, createStore, createEvent } from 'effector';
+import { combine, createEffect, createStore } from 'effector';
 import { asyncStates } from '../lib/utils';
 
 export const loadArticlesData = async ({ articles, users, tags, articlesTags, actions }) =>
@@ -36,7 +36,6 @@ export const makeArticlesList = stores =>
 
 export const makeArticlesTagsActions = ({ getApiUrl, axios }) => ({
   loadArticlesTags: createEffect(async () => axios.get(getApiUrl('articlesTags'))),
-  relateArticleWithTags: createEvent(),
 });
 
 export const makeArticlesTags = (
@@ -58,14 +57,12 @@ export const makeArticlesTags = (
       status: asyncStates.resolved,
       errors: null,
     }))
-    .on(actions.relateArticleWithTags, (state, { articleId, tagIds, type }) => {
-      let data;
-      const articleTagsList = tagIds.map(tag_id => ({ article_id: articleId, tag_id }));
-      if (type === 'add') {
-        data = state.data.concat(articleTagsList);
-      } else {
-        data = state.data.filter(el => el.article_id !== articleId).concat(articleTagsList);
-      }
-
-      return { ...state, data };
+    .on(actions.addArticle.done, (state, { result: article }) => {
+      console.log(article)
+      const { id: articleId, tagIds } = article;
+      return {
+        ...state,
+        data:
+          tagIds.map(tag_id => ({ article_id: articleId, tag_id })) |> (v => state.data.concat(v)),
+      };
     });

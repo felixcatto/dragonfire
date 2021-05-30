@@ -6,15 +6,12 @@ import { useContext } from '../lib/context';
 import { getUrl } from '../lib/routes';
 
 const Tags = () => {
-  const { axios, $session, $tags, actions, getApiUrl } = useContext();
+  const { $session, $tags, actions } = useContext();
   const tags = useStore($tags);
   const { isSignedIn } = useStore($session);
   console.log(tags);
 
-  const deleteTag = id => async () => {
-    await axios({ method: 'delete', url: getApiUrl('tag', { id }) });
-    await actions.loadTags();
-  };
+  const deleteTag = id => async () => actions.deleteTag(id);
 
   React.useEffect(() => {
     if (tags.status === asyncStates.idle) {

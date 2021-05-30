@@ -23,14 +23,14 @@ export default ({ article = emptyObject, type = 'add' }) => {
   const tagsForSelect = tags.data.map(transformTag);
   const articleTags = article.tags || [];
   const selectedTags = articleTags.map(transformTag);
+  const tagIds = articleTags.map(tag => tag.id);
 
   const onSubmit = async (values, fmActions) => {
     try {
       if (type === 'add') {
-        const newArticle = await actions.addArticle(values);
-        actions.relateArticleWithTags({ articleId: newArticle.id, tagIds: values.tagIds, type });
+        await actions.addArticle(values);
       } else {
-        await actions.editArticle();
+        await actions.editArticle({ id: article.id, values });
       }
       history.push(getUrl('articles'));
     } catch (e) {
@@ -43,7 +43,7 @@ export default ({ article = emptyObject, type = 'add' }) => {
       initialValues={{
         title: article.title,
         text: article.text,
-        tagIds: articleTags.map(tag => tag.id),
+        tagIds,
       }}
       onSubmit={onSubmit}
       initialStatus={{ apiErrors: {} }}

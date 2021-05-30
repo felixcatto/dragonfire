@@ -9,15 +9,12 @@ import { getUrl } from '../lib/routes';
 const userIconClass = role => cn('mr-5', userRolesToIcons[role]);
 
 const Users = () => {
-  const { axios, $session, $users, actions, getApiUrl } = useContext();
+  const { $session, $users, actions } = useContext();
   const users = useStore($users);
   const { isAdmin } = useStore($session);
   console.log(users);
 
-  const deleteUser = id => async () => {
-    await axios({ method: 'delete', url: getApiUrl('user', { id }) });
-    await actions.loadUsers();
-  };
+  const deleteUser = id => async () => actions.deleteUser(id);
 
   React.useEffect(() => {
     if (users.status === asyncStates.idle) {

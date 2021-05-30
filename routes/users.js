@@ -25,8 +25,8 @@ export default async app => {
         return reply.code(400).send({ errors });
       }
 
-      const { id } = await User.query().insert(request.data);
-      reply.code(201).send({ id });
+      const user = await User.query().insert(request.data);
+      reply.code(201).send(user);
     }
   );
 
@@ -41,8 +41,8 @@ export default async app => {
         return reply.code(400).send({ errors });
       }
 
-      await User.query().update(request.data).where('id', id);
-      reply.code(201).send({ id });
+      const user = await User.query().updateAndFetchById(request.params.id, request.data);
+      reply.code(201).send(user);
     }
   );
 
