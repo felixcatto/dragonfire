@@ -1,15 +1,11 @@
 import React from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { omit } from 'lodash';
 import { useStore } from 'effector-react';
 import { useContext } from '../lib/context';
 import { ErrorMessage, Field, emptyObject } from '../lib/utils';
-import { getUrl } from '../lib/routes';
 
-export default ({ backUrl, afterSubmit, comment = emptyObject, type = 'add' }) => {
-  const history = useHistory();
-  const { id: articleId } = useParams();
+export default ({ backButton, afterSubmit, articleId, comment = emptyObject, type = 'add' }) => {
   const { $session, axios, getApiUrl } = useContext();
   const { isSignedIn } = useStore($session);
   const isNewComment = type === 'add';
@@ -21,12 +17,10 @@ export default ({ backUrl, afterSubmit, comment = emptyObject, type = 'add' }) =
       if (type === 'add') {
         await axios.post(getApiUrl('comments', { id: articleId }), newValues);
         fmActions.setFieldValue('text', '');
-        await afterSubmit();
       } else {
         await axios.put(getApiUrl('comment', { id: articleId, commentId: comment.id }), newValues);
-        await afterSubmit();
-        history.push(backUrl);
       }
+      await afterSubmit();
     } catch (e) {
       fmActions.setStatus({ apiErrors: e.response.data.errors });
     }
@@ -56,9 +50,7 @@ export default ({ backUrl, afterSubmit, comment = emptyObject, type = 'add' }) =
           </div>
         </div>
 
-        <Link to={backUrl} className="mr-10">
-          Back
-        </Link>
+        {backButton}
         <button className="btn btn-primary" type="submit">
           Save
         </button>

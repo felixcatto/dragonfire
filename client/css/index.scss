@@ -78,6 +78,16 @@ a {
   }
 }
 
+.btn-link {
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  color: var(--orange);
+  &:hover {
+    color: var(--orange-600);
+  }
+}
+
 .form-control {
   &__inline {
     width: auto;

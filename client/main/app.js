@@ -23,7 +23,6 @@ import ShowArticle from '../articles/show';
 import NewArticle from '../articles/new';
 import EditArticle from '../articles/edit';
 import { makeArticles, makeArticlesActions } from '../articles/articlesSlice';
-import EditComment from '../comments/edit';
 import Tags from '../tags/index';
 import NewTag from '../tags/new';
 import EditTag from '../tags/edit';
@@ -145,12 +144,6 @@ const App = () => {
             exact
             path={routes.editArticle}
             component={EditArticle}
-          />
-          <ProtectedRoute
-            canRender={true}
-            exact
-            path={routes.editComment}
-            component={EditComment}
           />
           <Route exact path={routes.tags} component={Tags} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.newTag} component={NewTag} />

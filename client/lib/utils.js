@@ -131,3 +131,14 @@ export const qb = mainRow => ({
     return targetTable.find(targetRow => targetRow[targetTableId] === mainRow[mainRowId]);
   },
 });
+
+export const usePageSwitch = ({ pages, components, state }) => {
+  const [pageState, setPageState] = useImmerState(state);
+  const { page, ...restProps } = pageState;
+
+  return {
+    ...pageState,
+    setPageState,
+    renderPage: () => React.createElement(components[page], { ...restProps, pages, setPageState }),
+  };
+};
