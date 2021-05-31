@@ -9,6 +9,7 @@ export const routes = makeUndefinedKeyError({
   article: '/articles/:id',
   newArticle: '/articles/new',
   editArticle: '/articles/:id/edit',
+  editComment: '/articles/:id/comments/:commentId/edit',
   tags: '/tags',
   newTag: '/tags/new',
   editTag: '/tags/:id/edit',

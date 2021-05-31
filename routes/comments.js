@@ -8,6 +8,15 @@ export default async app => {
     return comment.author_id;
   });
 
+  app.get('/comments/:commentId', { name: 'comment' }, async (request, reply) => {
+    const { commentId } = request.params;
+    const comment = await Comment.query().findById(commentId);
+    if (!comment) {
+      return reply.code(400).send({ message: `Comment with id "${commentId}" not found` });
+    }
+    return comment;
+  });
+
   app.post(
     '/comments',
     { name: 'comments', preHandler: validate(Comment.yupSchema) },
@@ -25,7 +34,7 @@ export default async app => {
 
   app.put(
     '/comments/:commentId',
-    { name: 'comment', preHandler: [isCommentBelongsToUser, validate(Comment.yupSchema)] },
+    { preHandler: [isCommentBelongsToUser, validate(Comment.yupSchema)] },
     async (request, reply) => {
       const { commentId } = request.params;
       await Comment.query().update(request.data).where('id', commentId);
