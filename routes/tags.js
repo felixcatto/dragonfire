@@ -11,7 +11,7 @@ export default async app => {
     const { id } = request.params;
     const tag = await Tag.query().findById(id);
     if (!tag) {
-      return reply.code(400).send({ message: `Tag with id "${id}" not found` });
+      return reply.code(400).send({ message: `Entity with id '${id}' not found` });
     }
     return tag;
   });

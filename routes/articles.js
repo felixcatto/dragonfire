@@ -14,11 +14,16 @@ export default async app => {
 
   app.get('/articles', { name: 'articles' }, async () => getArticles(Article));
 
-  app.get('/articles/:id', { name: 'article' }, async request =>
-    Article.query()
-      .findById(request.params.id)
-      .withGraphFetched('[author, comments(orderByCreated).author, tags]')
-  );
+  app.get('/articles/:id', { name: 'article' }, async (request, reply) => {
+    const { id } = request.params;
+    const article = await Article.query()
+      .findById(id)
+      .withGraphFetched('[author, comments(orderByCreated).author, tags]');
+    if (!article) {
+      return reply.code(400).send({ message: `Entity with id '${id}' not found` });
+    }
+    return article;
+  });
 
   app.post(
     '/articles',

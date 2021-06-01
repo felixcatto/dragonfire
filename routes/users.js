@@ -11,7 +11,7 @@ export default async app => {
     const { id } = request.params;
     const user = await User.query().findById(id);
     if (!user) {
-      return reply.code(400).send({ message: `User with id "${id}" not found` });
+      return reply.code(400).send({ message: `Entity with id '${id}' not found` });
     }
     return user;
   });

@@ -17,9 +17,7 @@ const EditUser = () => {
 
   React.useEffect(() => {
     if (isEmpty(user)) {
-      axios({ url: getApiUrl('user', { id }) })
-        .then(data => setState({ user: data }))
-        .catch(({ response }) => console.log(response));
+      axios({ url: getApiUrl('user', { id }) }).then(data => setState({ user: data }));
     }
   }, []);
 

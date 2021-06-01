@@ -7,11 +7,12 @@ import Form from './form';
 import { emptyObject, qb } from '../lib/utils';
 
 const EditArticle = () => {
-  const { getApiUrl, axios, $articles, $articlesTags, $tags } = useContext();
+  const { getApiUrl, axios, $articles, $articlesTags, $tags, $session } = useContext();
   const { id } = useParams();
   const { data: articles } = useStore($articles);
   const { data: articlesTags } = useStore($articlesTags);
   const { data: tags } = useStore($tags);
+  const { isBelongsToUser } = useStore($session);
 
   const cashArticle = articles.find(el => el.id === +id);
   if (cashArticle) {
@@ -22,16 +23,17 @@ const EditArticle = () => {
 
   React.useEffect(() => {
     if (isEmpty(article)) {
-      axios({ url: getApiUrl('article', { id }) })
-        .then(data => setArticle(data))
-        .catch(({ response }) => console.log(response));
+      axios({ url: getApiUrl('article', { id }) }).then(data => setArticle(data));
     }
   }, []);
+
+  if (isEmpty(article)) return null;
+  if (!isBelongsToUser(article.author_id)) return '403 forbidden';
 
   return (
     <div>
       <h3>Edit Article</h3>
-      {!isEmpty(article) && <Form type="edit" article={article} />}
+      <Form type="edit" article={article} />
     </div>
   );
 };

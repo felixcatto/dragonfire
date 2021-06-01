@@ -34,12 +34,16 @@ import {
   makeArticlesTags,
   makeArticlesTagsActions,
 } from '../common/generalSlice';
+import Structure from '../common/structure';
 
 const Provider = ({ initialState, children }) => {
   const axios = originalAxios.create();
   axios.interceptors.response.use(
     response => response.data,
-    error => Promise.reject(error)
+    error => {
+      console.log(error.response);
+      return Promise.reject(error);
+    }
   );
 
   const { getApiUrl, currentUser } = initialState;
@@ -132,15 +136,15 @@ const App = () => {
           <ProtectedRoute canRender={isAdmin} exact path={routes.newUser} component={NewUser} />
           <ProtectedRoute canRender={isAdmin} exact path={routes.editUser} component={EditUser} />
           <Route exact path={routes.articles} component={Articles} />
-          <Route exact path={routes.article} component={ShowArticle} />
           <ProtectedRoute
             canRender={isSignedIn}
             exact
             path={routes.newArticle}
             component={NewArticle}
           />
+          <Route exact path={routes.article} component={ShowArticle} />
           <ProtectedRoute
-            canRender={true}
+            canRender="maybe"
             exact
             path={routes.editArticle}
             component={EditArticle}
@@ -148,6 +152,7 @@ const App = () => {
           <Route exact path={routes.tags} component={Tags} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.newTag} component={NewTag} />
           <ProtectedRoute canRender={isSignedIn} exact path={routes.editTag} component={EditTag} />
+          <Route exact path={routes.projectStructure} component={Structure} />
         </Switch>
       </div>
     </div>

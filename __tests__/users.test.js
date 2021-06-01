@@ -2,16 +2,19 @@ import { omit } from 'lodash';
 import getApp from '../main';
 import usersFixture from './fixtures/users';
 import encrypt from '../lib/secure';
+import { getLoginCookie } from './fixtures/utils';
 
 describe('users', () => {
   const server = getApp();
   let User;
   let getApiUrl;
+  let loginCookie;
 
   beforeAll(async () => {
     await server.ready();
     getApiUrl = server.ctx.getApiUrl;
     User = server.objection.User;
+    loginCookie = await getLoginCookie(server, getApiUrl);
   });
 
   beforeEach(async () => {
@@ -41,6 +44,7 @@ describe('users', () => {
       method: 'post',
       url: getApiUrl('users'),
       payload: user,
+      cookies: loginCookie,
     });
 
     const userFromDb = await User.query().findOne('name', user.name);
@@ -56,6 +60,7 @@ describe('users', () => {
       method: 'post',
       url: getApiUrl('users'),
       payload: user,
+      cookies: loginCookie,
     });
 
     expect(res.statusCode).toBe(400);
@@ -70,6 +75,7 @@ describe('users', () => {
       method: 'put',
       url: getApiUrl('user', { id: user.id }),
       payload: user,
+      cookies: loginCookie,
     });
 
     const userFromDb = await User.query().findOne('name', user.name);
@@ -83,6 +89,7 @@ describe('users', () => {
     const res = await server.inject({
       method: 'delete',
       url: getApiUrl('user', { id: user.id }),
+      cookies: loginCookie,
     });
     const userFromDb = await User.query().findById(user.id);
     expect(res.statusCode).toBe(201);

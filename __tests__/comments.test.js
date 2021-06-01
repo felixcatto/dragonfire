@@ -2,6 +2,7 @@ import getApp from '../main';
 import usersFixture from './fixtures/users';
 import articlesFixture from './fixtures/articles';
 import commentsFixture from './fixtures/comments';
+import { getLoginCookie } from './fixtures/utils';
 
 describe('articles', () => {
   const server = getApp();
@@ -9,6 +10,7 @@ describe('articles', () => {
   let Article;
   let Comment;
   let getApiUrl;
+  let loginCookie;
 
   beforeAll(async () => {
     await server.ready();
@@ -20,6 +22,7 @@ describe('articles', () => {
     await Article.query().delete();
     await User.query().insertGraph(usersFixture);
     await Article.query().insertGraph(articlesFixture);
+    loginCookie = await getLoginCookie(server, getApiUrl);
   });
 
   beforeEach(async () => {
@@ -54,6 +57,7 @@ describe('articles', () => {
       method: 'put',
       url: getApiUrl('comment', { id: comment.article_id, commentId: comment.id }),
       payload: comment,
+      cookies: loginCookie,
     });
 
     const commentFromDb = await Comment.query().findById(comment.id);
@@ -66,6 +70,7 @@ describe('articles', () => {
     const res = await server.inject({
       method: 'delete',
       url: getApiUrl('comment', { id: comment.article_id, commentId: comment.id }),
+      cookies: loginCookie,
     });
 
     const commentFromDb = await Comment.query().findById(comment.id);

@@ -113,7 +113,7 @@ export const emptyObject = new Proxy(
 );
 
 export const ProtectedRoute = ({ canRender, ...restProps }) =>
-  canRender ? <Route {...restProps} /> : '403 forbidden';
+  canRender || canRender === 'maybe' ? <Route {...restProps} /> : '403 forbidden';
 
 export const qb = mainRow => ({
   rowToMany(joinTable, targetTable, joinClause) {

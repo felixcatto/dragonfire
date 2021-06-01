@@ -15,11 +15,9 @@ export const loadArticlesData = async ({ articles, users, tags, articlesTags, ac
 
 export const makeArticlesList = stores =>
   combine(stores, ([users, articles, tags, articlesTags]) => {
-    console.log('here');
     if ([users, articles, tags, articlesTags].some(el => el.status !== asyncStates.resolved)) {
       return [];
     }
-    console.log('computed');
     const usersList = users.data;
     const articlesList = articles.data;
     const tagsList = tags.data;

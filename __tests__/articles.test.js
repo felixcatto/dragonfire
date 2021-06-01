@@ -3,6 +3,7 @@ import usersFixture from './fixtures/users';
 import articlesFixture from './fixtures/articles';
 import tagsFixture from './fixtures/tags';
 import articleTagsFixture from './fixtures/articles_tags';
+import { getLoginCookie } from './fixtures/utils';
 
 describe('articles', () => {
   const server = getApp();
@@ -11,6 +12,7 @@ describe('articles', () => {
   let Tag;
   let knex;
   let getApiUrl;
+  let loginCookie;
 
   beforeAll(async () => {
     await server.ready();
@@ -24,6 +26,7 @@ describe('articles', () => {
     await Tag.query().delete();
     await User.query().insertGraph(usersFixture);
     await Tag.query().insertGraph(tagsFixture);
+    loginCookie = await getLoginCookie(server, getApiUrl);
   });
 
   beforeEach(async () => {
@@ -61,6 +64,7 @@ describe('articles', () => {
       method: 'post',
       url: getApiUrl('articles'),
       payload: article,
+      cookies: loginCookie,
     });
 
     const articleFromDb = await Article.query().findOne('title', article.title);
@@ -79,6 +83,7 @@ describe('articles', () => {
       method: 'post',
       url: getApiUrl('articles'),
       payload: article,
+      cookies: loginCookie,
     });
 
     const articleFromDb = await Article.query()
@@ -97,6 +102,7 @@ describe('articles', () => {
       method: 'put',
       url: getApiUrl('article', { id: article.id }),
       payload: article,
+      cookies: loginCookie,
     });
 
     const articleFromDb = await Article.query().findById(article.id);
@@ -113,6 +119,7 @@ describe('articles', () => {
       method: 'put',
       url: getApiUrl('article', { id: article.id }),
       payload: article,
+      cookies: loginCookie,
     });
 
     const articleFromDb = await Article.query().findById(article.id).withGraphFetched('tags');
@@ -125,6 +132,7 @@ describe('articles', () => {
     const res = await server.inject({
       method: 'delete',
       url: getApiUrl('article', { id: article.id }),
+      cookies: loginCookie,
     });
     const articleFromDb = await Article.query().findById(article.id);
     expect(res.statusCode).toBe(201);

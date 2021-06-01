@@ -12,7 +12,7 @@ export default async app => {
     const { commentId } = request.params;
     const comment = await Comment.query().findById(commentId);
     if (!comment) {
-      return reply.code(400).send({ message: `Comment with id "${commentId}" not found` });
+      return reply.code(400).send({ message: `Entity with id '${commentId}' not found` });
     }
     return comment;
   });

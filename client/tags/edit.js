@@ -17,9 +17,7 @@ const EditTag = () => {
 
   React.useEffect(() => {
     if (isEmpty(tag)) {
-      axios({ url: getApiUrl('tag', { id }) })
-        .then(data => setState({ tag: data }))
-        .catch(({ response }) => console.log(response));
+      axios({ url: getApiUrl('tag', { id }) }).then(data => setState({ tag: data }));
     }
   }, []);
 
