@@ -37,6 +37,7 @@ module.exports = {
       ],
       '@babel/preset-react',
     ],
+
     plugins: [
       '@babel/plugin-proposal-optional-chaining',
       ['@babel/plugin-proposal-pipeline-operator', { proposal: 'minimal' }],
@@ -50,5 +51,7 @@ module.exports = {
         },
       ],
     ],
+
+    env: { development: { plugins: ['source-map-support'] } },
   },
 };

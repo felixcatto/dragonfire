@@ -54,6 +54,7 @@
     "babel-jest": "^26.2.2",
     "babel-loader": "^8.1.0",
     "babel-plugin-css-modules-transform": "^1.6.2",
+    "babel-plugin-source-map-support": "^2.1.3",
     "blunt-livereload": "^0.1.0",
     "css-loader": "^5.2.6",
     "css-minimizer-webpack-plugin": "^3.0.0",

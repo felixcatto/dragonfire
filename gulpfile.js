@@ -12,6 +12,7 @@ const { promisify } = require('util');
 const webpackConfig = require('./webpack.config.js');
 const babelConfig = require('./babelconfig.js');
 
+const isDevelopment = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
 const finished = promisify(stream.finished);
 const { series, parallel } = gulp;
 
@@ -101,18 +102,26 @@ const copyPublicDev = () =>
 
 const transpileServerJs = () =>
   gulp
-    .src(paths.serverJs.src, { since: gulp.lastRun(transpileServerJs) })
+    .src(paths.serverJs.src, { sourcemaps: isDevelopment, since: gulp.lastRun(transpileServerJs) })
     .pipe(babel(babelConfig.server))
-    .pipe(gulp.dest(paths.serverJs.dest));
+    .pipe(gulp.dest(paths.serverJs.dest, { sourcemaps: isDevelopment }));
+
 const transpileCC = () =>
   gulp
     .src(paths.client.components, {
       since: gulp.lastRun(transpileCC),
+      sourcemaps: isDevelopment,
     })
     .pipe(babel(babelConfig.server))
-    .pipe(gulp.dest(paths.client.dest));
+    .pipe(gulp.dest(paths.client.dest, { sourcemaps: isDevelopment }));
+
 const transpileFolder = async (src, dest) =>
-  finished(gulp.src(src).pipe(babel(babelConfig.server)).pipe(gulp.dest(dest)));
+  finished(
+    gulp
+      .src(src, { sourcemaps: isDevelopment })
+      .pipe(babel(babelConfig.server))
+      .pipe(gulp.dest(dest, { sourcemaps: isDevelopment }))
+  );
 
 const trackChangesInDist = () => {
   const watcher = gulp.watch('dist/**/*');
