@@ -1,20 +1,24 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
+import { Link } from 'react-router-dom';
 import { omit } from 'lodash';
 import { useStore } from 'effector-react';
 import { useContext } from '../lib/context';
 import { ErrorMessage, Field, emptyObject } from '../lib/utils';
+import { getUrl } from '../lib/routes';
 
-export default ({ backButton, afterSubmit, articleId, comment = emptyObject, type = 'add' }) => {
+export default React.forwardRef((props, ref) => {
+  const { afterSubmit, articleId, comment = emptyObject, type = 'add' } = props;
   const { $session, axios, getApiUrl } = useContext();
   const { isSignedIn } = useStore($session);
-  const isNewComment = type === 'add';
-  const canShowGuestName = (isNewComment && !isSignedIn) || (!isNewComment && !comment.author_id);
+  const isNewCommentForm = type === 'add';
+  const canShowGuestName =
+    (isNewCommentForm && !isSignedIn) || (!isNewCommentForm && !comment.author_id);
 
   const onSubmit = async (values, fmActions) => {
     const newValues = canShowGuestName ? values : omit(values, 'guest_name');
     try {
-      if (type === 'add') {
+      if (isNewCommentForm) {
         await axios.post(getApiUrl('comments', { id: articleId }), newValues);
         fmActions.setFieldValue('text', '');
       } else {
@@ -32,8 +36,8 @@ export default ({ backButton, afterSubmit, articleId, comment = emptyObject, typ
       onSubmit={onSubmit}
       initialStatus={{ apiErrors: {} }}
     >
-      <Form>
-        <div className="row mb-20">
+      <Form ref={ref}>
+        <div className="row">
           <div className="col-6">
             {canShowGuestName && (
               <div className="mb-15">
@@ -43,18 +47,25 @@ export default ({ backButton, afterSubmit, articleId, comment = emptyObject, typ
               </div>
             )}
             <div>
-              <label>Text</label>
+              {isNewCommentForm && <label>Text</label>}
               <Field as="textarea" className="form-control" name="text" />
               <ErrorMessage name="text" />
             </div>
           </div>
         </div>
 
-        {backButton}
-        <button className="btn btn-primary" type="submit">
-          Save
-        </button>
+        {isNewCommentForm && (
+          <div className="mt-20">
+            <Link to={getUrl('articles')} className="mr-10">
+              Back
+            </Link>
+
+            <button className="btn btn-primary" type="submit">
+              Save
+            </button>
+          </div>
+        )}
       </Form>
     </Formik>
   );
-};
+});

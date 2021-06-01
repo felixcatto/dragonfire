@@ -44,4 +44,12 @@ export class Comment extends Model {
       text: y.string().required('required'),
     });
   }
+
+  static get modifiers() {
+    return {
+      orderByCreated(builder) {
+        builder.orderBy('created_at');
+      },
+    };
+  }
 }
