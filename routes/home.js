@@ -13,7 +13,7 @@ export default async app => {
   });
 
   app.get('/*', async (request, reply) => {
-    const { template, getApiUrl, routes, isDevelopment } = app.ctx;
+    const { template, getApiUrl, routes, isDevelopment, manifest } = app.ctx;
     const { currentUser } = request;
 
     let routeData = {};
@@ -36,12 +36,18 @@ export default async app => {
         </StaticRouter>
       )
     );
-
     const initialStateScript = `
       <script>window.INITIAL_STATE = ${JSON.stringify(initialState)}</script>`;
-    const html = template
-      .replace('{{content}}', renderedComponent)
-      .replace('{{initialState}}', initialStateScript);
+
+    const html =
+      template
+        .replace('{{content}}', renderedComponent)
+        .replace('{{initialState}}', initialStateScript)
+      |> (v =>
+        Object.keys(manifest).reduce(
+          (acc, filename) => acc.replace(`{{${filename}}}`, manifest[filename]),
+          v
+        ));
 
     reply.type('text/html');
     reply.send(html);

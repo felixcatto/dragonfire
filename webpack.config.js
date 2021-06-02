@@ -1,17 +1,20 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const babelConfig = require('./babelconfig.js');
 const { generateScopedName } = require('./lib/devUtils');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const common = {
   entry: {
-    'index.js': path.resolve(__dirname, 'client/main/index.js'),
+    index: path.resolve(__dirname, 'client/main/index.js'),
   },
   output: {
-    filename: '[name]',
-    path: path.resolve(__dirname, 'dist/public/js'),
+    filename: isProduction ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
+    path: path.resolve(__dirname, 'dist/public'),
   },
   module: {
     rules: [
@@ -43,9 +46,23 @@ const common = {
       },
     ],
   },
-  plugins: [new MiniCssExtractPlugin({ filename: '../css/index.css' })],
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: isProduction ? 'css/index.[contenthash:8].css' : 'css/index.css',
+    }),
+    new WebpackManifestPlugin({ publicPath: '/' }),
+  ],
   optimization: {
     minimizer: ['...', new CssMinimizerPlugin()],
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/](.*react.*|lodash.*|formik|effector|yup|immer|date-fns)[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    },
   },
   stats: { warnings: false, children: false, modules: false },
 };
@@ -63,7 +80,7 @@ if (process.env.ANALYZE) {
     mode: 'production',
   };
 } else {
-  common.entry['index.js'] = ['blunt-livereload/dist/client', common.entry['index.js']];
+  common.entry['index'] = ['blunt-livereload/dist/client', common.entry['index']];
 
   module.exports = {
     ...common,

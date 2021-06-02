@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import './fontawesome.min.css';
 @import './solid.min.css';
@@ -177,7 +179,7 @@ $duration: 1.8s;
     stroke-dashoffset: $offset;
   }
   50% {
-    stroke-dashoffset: $offset/4;
+    stroke-dashoffset: math.div($offset, 4);
     transform: rotate(135deg);
   }
   100% {
@@ -191,7 +193,7 @@ $duration: 1.8s;
     stroke-dashoffset: $offsetBold;
   }
   50% {
-    stroke-dashoffset: $offsetBold/4;
+    stroke-dashoffset: math.div($offsetBold, 4);
     transform: rotate(135deg);
   }
   100% {

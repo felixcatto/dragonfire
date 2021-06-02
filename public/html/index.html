@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Dragonfire</title>
-    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="{{index.css}}" />
     <link rel="preload" href="/font/fa-solid-900.woff" as="font" type="font/woff" crossorigin="" />
     <link rel="preload" href="/font/SourceSansProR.ttf" as="font" type="font/ttf" crossorigin="" />
     <link rel="preload" href="/font/SourceSansProL.ttf" as="font" type="font/ttf" crossorigin="" />
@@ -12,6 +12,7 @@
   <body>
     <div id="root">{{content}}</div>
     {{initialState}}
-    <script src="/js/index.js"></script>
+    <script src="{{vendors.js}}"></script>
+    <script src="{{index.js}}"></script>
   </body>
 </html>

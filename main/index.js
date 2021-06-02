@@ -12,6 +12,8 @@ export default () => {
   const mode = process.env.NODE_ENV || 'development';
   const pathPublic = path.resolve(__dirname, '../public');
   const template = fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8');
+  const manifest =
+    fs.readFileSync(path.resolve(__dirname, pathPublic, 'manifest.json'), 'utf8') |> JSON.parse;
 
   const app = fastify({
     logger: {
@@ -22,6 +24,7 @@ export default () => {
 
   app.decorate('ctx', {
     template,
+    manifest,
     getApiUrl: fastifyReverseRoutes,
     routes: null,
     isDevelopment: mode === 'development',
