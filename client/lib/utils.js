@@ -5,9 +5,13 @@ import { isFunction, omit } from 'lodash';
 import produce from 'immer';
 import { useFormikContext, getIn } from 'formik';
 import Select from 'react-select';
+import useSWROriginal from 'swr';
 import { roles } from '../../lib/sharedUtils';
+import Context from './context';
 
 export * from '../../lib/sharedUtils';
+
+export const useContext = () => React.useContext(Context);
 
 export const ErrorMessage = ({ name }) => {
   const { status, touched, errors } = useFormikContext();
@@ -51,6 +55,15 @@ export const MultiSelect = ({ name, defaultValue, options }) => {
   );
 };
 
+export const SubmitBtn = ({ children, ...props }) => {
+  const { isSubmitting } = useFormikContext();
+  return (
+    <button type="submit" disabled={isSubmitting} {...props}>
+      {children}
+    </button>
+  );
+};
+
 export const userRolesToIcons = {
   [roles.admin]: 'fa fa-star',
   [roles.user]: 'fa fa-fire',
@@ -84,19 +97,13 @@ export const NavLink = ({ ...restProps }) => (
 export const useImmerState = initialState => {
   const [state, setState] = useState(initialState);
 
-  const oldState = React.useRef();
-  oldState.current = state;
-
   const setImmerState = React.useRef(fnOrObject => {
     if (isFunction(fnOrObject)) {
       const fn = fnOrObject;
-      setState(produce(oldState.current, fn));
+      setState(curState => produce(curState, fn));
     } else {
       const newState = fnOrObject;
-      setState({
-        ...oldState.current,
-        ...newState,
-      });
+      setState(curState => ({ ...curState, ...newState }));
     }
   });
 
@@ -140,5 +147,24 @@ export const usePageSwitch = ({ pages, components, state }) => {
     ...pageState,
     setPageState,
     renderPage: () => React.createElement(components[page], { ...restProps, pages, setPageState }),
+  };
+};
+
+export const useSWR = (url, config = {}) => {
+  const { isFirstRender } = useContext();
+  const revalidateOnMount = !config.initialData || (config.initialData && !isFirstRender.current);
+  return useSWROriginal(url, { ...config, revalidateOnMount });
+};
+
+export const dedup = fn => {
+  let isRunning = false;
+  return async () => {
+    if (isRunning) return;
+    isRunning = true;
+    try {
+      return await fn();
+    } finally {
+      isRunning = false;
+    }
   };
 };

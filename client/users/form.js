@@ -1,20 +1,19 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
-import { useContext } from '../lib/context';
-import { ErrorMessage, Field, roles, emptyObject } from '../lib/utils';
+import { useContext, ErrorMessage, Field, roles, emptyObject, SubmitBtn } from '../lib/utils';
 import { getUrl } from '../lib/routes';
 
 const UserForm = ({ user = emptyObject, type = 'add' }) => {
   const history = useHistory();
-  const { actions } = useContext();
+  const { axios, getApiUrl } = useContext();
 
   const onSubmit = async (values, fmActions) => {
     try {
       if (type === 'add') {
-        await actions.addUser(values);
+        await axios.post(getApiUrl('users'), values);
       } else {
-        await actions.editUser({ id: user.id, values });
+        await axios.put(getApiUrl('user', { id: user.id }), values);
       }
       history.push(getUrl('users'));
     } catch (e) {
@@ -68,9 +67,7 @@ const UserForm = ({ user = emptyObject, type = 'add' }) => {
         <Link to={getUrl('users')} className="mr-10">
           Back
         </Link>
-        <button className="btn btn-primary" type="submit">
-          Save
-        </button>
+        <SubmitBtn className="btn btn-primary">Save</SubmitBtn>
       </Form>
     </Formik>
   );

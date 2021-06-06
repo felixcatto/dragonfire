@@ -1,20 +1,19 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
-import { useContext } from '../lib/context';
-import { ErrorMessage, Field, emptyObject } from '../lib/utils';
+import { useContext, ErrorMessage, Field, emptyObject, SubmitBtn } from '../lib/utils';
 import { getUrl } from '../lib/routes';
 
 export default ({ tag = emptyObject, type = 'add' }) => {
   const history = useHistory();
-  const { actions } = useContext();
+  const { axios, getApiUrl } = useContext();
 
   const onSubmit = async (values, fmActions) => {
     try {
       if (type === 'add') {
-        await actions.addTag(values);
+        await axios.post(getApiUrl('tags'), values);
       } else {
-        await actions.editTag({ id: tag.id, values });
+        await axios.put(getApiUrl('tag', { id: tag.id }), values);
       }
       history.push(getUrl('tags'));
     } catch (e) {
@@ -42,9 +41,7 @@ export default ({ tag = emptyObject, type = 'add' }) => {
         <Link to={getUrl('tags')} className="mr-10">
           Back
         </Link>
-        <button className="btn btn-primary" type="submit">
-          Save
-        </button>
+        <SubmitBtn className="btn btn-primary">Save</SubmitBtn>
       </Form>
     </Formik>
   );

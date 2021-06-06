@@ -3,8 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { isEmpty } from 'lodash';
 import { useParams } from 'react-router-dom';
 import { useStore } from 'effector-react';
-import { userRolesToIcons, roles, useImmerState } from '../lib/utils';
-import { useContext } from '../lib/context';
+import { userRolesToIcons, roles, useImmerState, useContext, useSWR } from '../lib/utils';
 import s from './styles.module.scss';
 import CommentForm from '../comments/form';
 
@@ -81,25 +80,16 @@ const ShowArticle = () => {
   const { id } = useParams();
   const { $session, axios, getApiUrl } = useContext();
   const { isBelongsToUser } = useStore($session);
-  const [state, setState] = useImmerState({
-    article: null,
-    editedCommentId: null,
-  });
-  const { article, editedCommentId } = state;
+  const { data: article, mutate } = useSWR(getApiUrl('article', { id }));
+  const [{ editedCommentId }, setState] = useImmerState({ editedCommentId: null });
 
-  const getArticle = async () => axios({ url: getApiUrl('article', { id }) });
-  React.useEffect(() => {
-    getArticle().then(data => setState({ article: data }));
-  }, [id]);
-
-  const updateArticle = async () => getArticle().then(data => setState({ article: data }));
   const afterSaveComment = async () => {
-    const data = await getArticle();
-    setState({ article: data, editedCommentId: null });
+    await mutate();
+    setState({ editedCommentId: null });
   };
   const deleteComment = ({ id: articleId, commentId }) => async () => {
     await axios.delete(getApiUrl('comment', { id: articleId, commentId }));
-    await updateArticle();
+    await mutate();
   };
   const editComment = commentId => () => setState({ editedCommentId: commentId });
   const hideEditedComment = () => setState({ editedCommentId: null });
@@ -157,7 +147,7 @@ const ShowArticle = () => {
 
       <div className="mb-10">Leave a comment</div>
 
-      <CommentForm afterSubmit={updateArticle} articleId={id} />
+      <CommentForm afterSubmit={mutate} articleId={id} />
     </div>
   );
 };

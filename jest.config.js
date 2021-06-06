@@ -1,4 +1,4 @@
-const babelconfig = require('./babelconfig.js');
+const babelconfig = require('./babelconfig');
 
 module.exports = {
   transform: { '^.+\\.js$': ['babel-jest', babelconfig.server] },

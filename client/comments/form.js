@@ -3,8 +3,7 @@ import { Formik, Form } from 'formik';
 import { Link } from 'react-router-dom';
 import { omit } from 'lodash';
 import { useStore } from 'effector-react';
-import { useContext } from '../lib/context';
-import { ErrorMessage, Field, emptyObject } from '../lib/utils';
+import { useContext, ErrorMessage, Field, emptyObject, SubmitBtn } from '../lib/utils';
 import { getUrl } from '../lib/routes';
 
 export default React.forwardRef((props, ref) => {
@@ -60,9 +59,7 @@ export default React.forwardRef((props, ref) => {
               Back
             </Link>
 
-            <button className="btn btn-primary" type="submit">
-              Save
-            </button>
+            <SubmitBtn className="btn btn-primary">Save</SubmitBtn>
           </div>
         )}
       </Form>

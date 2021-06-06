@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const babelConfig = require('./babelconfig.js');
+const babelConfig = require('./babelconfig');
 const { generateScopedName } = require('./lib/devUtils');
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -80,7 +80,7 @@ if (process.env.ANALYZE) {
     mode: 'production',
   };
 } else {
-  common.entry['index'] = ['blunt-livereload/dist/client', common.entry['index']];
+  common.entry.index = ['blunt-livereload/dist/client', common.entry.index];
 
   module.exports = {
     ...common,

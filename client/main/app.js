@@ -1,42 +1,41 @@
 import React from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
 import cn from 'classnames';
-import { has } from 'lodash';
 import { useStore } from 'effector-react';
 import originalAxios from 'axios';
-import Context, { useContext } from '../lib/context';
+import { SWRConfig } from 'swr';
+import Context from '../lib/context';
 import {
   userRolesToIcons,
   NavLink,
   asyncStates,
   makeSessionInfo,
   ProtectedRoute,
+  useContext,
 } from '../lib/utils';
 import { routes, getUrl } from '../lib/routes';
 import Home from '../common/home';
 import Users from '../users/index';
 import NewUser from '../users/new';
 import EditUser from '../users/edit';
-import { makeUsers, makeUserActions } from '../users/usersSlice';
 import Articles from '../articles/index';
 import ShowArticle from '../articles/show';
 import NewArticle from '../articles/new';
 import EditArticle from '../articles/edit';
-import { makeArticles, makeArticlesActions } from '../articles/articlesSlice';
 import Tags from '../tags/index';
 import NewTag from '../tags/new';
 import EditTag from '../tags/edit';
-import { makeTags, makeTagActions } from '../tags/tagsSlice';
 import LoginForm from '../common/session';
 import { makeSession, makeSessionActions } from '../common/sessionSlice';
-import {
-  makeArticlesList,
-  makeArticlesTags,
-  makeArticlesTagsActions,
-} from '../common/generalSlice';
 import Structure from '../common/structure';
 
 const Provider = ({ initialState, children }) => {
+  const isFirstRender = React.useRef(true);
+
+  React.useEffect(() => {
+    isFirstRender.current = false;
+  }, []);
+
   const axios = originalAxios.create();
   axios.interceptors.response.use(
     response => response.data,
@@ -45,38 +44,22 @@ const Provider = ({ initialState, children }) => {
       return Promise.reject(error);
     }
   );
+  const swrConfig = { fetcher: axios.get, revalidateOnFocus: false };
 
   const { getApiUrl, currentUser } = initialState;
-  const actions = [
-    makeUserActions,
-    makeSessionActions,
-    makeTagActions,
-    makeArticlesActions,
-    makeArticlesTagsActions,
-  ].reduce(
+  const actions = [makeSessionActions].reduce(
     (acc, makeActions) => ({
       ...acc,
       ...makeActions({ getApiUrl, axios }),
     }),
     {}
   );
-  const initStore = (makeStore, key) =>
-    has(initialState, key) ? makeStore(actions, initialState[key]) : makeStore(actions);
 
-  const $users = initStore(makeUsers, '$users');
-  const $tags = initStore(makeTags, '$tags');
-  const $articles = initStore(makeArticles, '$articles');
-  const $articlesTags = initStore(makeArticlesTags, '$articlesTags');
-  const $articlesList = makeArticlesList([$users, $articles, $tags, $articlesTags]);
   const store = {
     ...initialState,
+    isFirstRender,
     axios,
     actions,
-    $users,
-    $tags,
-    $articles,
-    $articlesTags,
-    $articlesList,
     $session: makeSession(actions, {
       ...makeSessionInfo(currentUser),
       status: asyncStates.resolved,
@@ -84,7 +67,11 @@ const Provider = ({ initialState, children }) => {
     }),
   };
 
-  return <Context.Provider value={store}>{children}</Context.Provider>;
+  return (
+    <Context.Provider value={store}>
+      <SWRConfig value={swrConfig}>{children}</SWRConfig>
+    </Context.Provider>
+  );
 };
 
 const App = () => {
@@ -93,7 +80,6 @@ const App = () => {
   const { currentUser, isSignedIn, isAdmin } = useStore($session);
   const userIconClass = role => cn('app__user-role-icon mr-5', userRolesToIcons[role]);
 
-  console.log(currentUser);
   return (
     <div className="app">
       <div className="app__header">

@@ -2,25 +2,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import { useStore } from 'effector-react';
-import { userRolesToIcons, asyncStates } from '../lib/utils';
-import { useContext } from '../lib/context';
+import { userRolesToIcons, useSWR, dedup, useContext } from '../lib/utils';
 import { getUrl } from '../lib/routes';
 
 const userIconClass = role => cn('mr-5', userRolesToIcons[role]);
 
 const Users = () => {
-  const { $session, $users, actions } = useContext();
-  const users = useStore($users);
+  const { $session, getApiUrl, axios, ssrData } = useContext();
   const { isAdmin } = useStore($session);
+  const { data: users, mutate } = useSWR(getApiUrl('users'), { initialData: ssrData.users });
   console.log(users);
 
-  const deleteUser = id => async () => actions.deleteUser(id);
-
-  React.useEffect(() => {
-    if (users.status === asyncStates.idle) {
-      actions.loadUsers();
-    }
-  }, []);
+  const deleteUser = id =>
+    dedup(async () => {
+      await axios.delete(getApiUrl('user', { id }));
+      mutate();
+    });
 
   return (
     <div>
@@ -42,7 +39,7 @@ const Users = () => {
           </tr>
         </thead>
         <tbody>
-          {users.data.map(user => (
+          {users?.map(user => (
             <tr key={user.id}>
               <td>{user.name}</td>
               <td>

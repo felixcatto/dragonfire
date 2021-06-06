@@ -1,26 +1,15 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useStore } from 'effector-react';
 import { Formik, Form } from 'formik';
-import { useContext } from '../lib/context';
-import { ErrorMessage, Field, emptyObject, asyncStates, MultiSelect } from '../lib/utils';
+import { useContext, ErrorMessage, Field, emptyObject, MultiSelect, SubmitBtn } from '../lib/utils';
 import { getUrl } from '../lib/routes';
 
-export default ({ article = emptyObject, type = 'add' }) => {
+export default ({ tags, article = emptyObject, type = 'add' }) => {
   const history = useHistory();
-  const { $tags, actions } = useContext();
-  const tags = useStore($tags);
-
-  React.useEffect(() => {
-    if (tags.status === asyncStates.idle) {
-      actions.loadTags();
-    }
-  }, []);
-
-  if (tags.status !== asyncStates.resolved) return null;
+  const { axios, getApiUrl } = useContext();
 
   const transformTag = tag => ({ value: tag.id, label: tag.name });
-  const tagsForSelect = tags.data.map(transformTag);
+  const tagsForSelect = tags.map(transformTag);
   const articleTags = article.tags || [];
   const selectedTags = articleTags.map(transformTag);
   const tagIds = articleTags.map(tag => tag.id);
@@ -28,9 +17,9 @@ export default ({ article = emptyObject, type = 'add' }) => {
   const onSubmit = async (values, fmActions) => {
     try {
       if (type === 'add') {
-        await actions.addArticle(values);
+        await axios.post(getApiUrl('articles'), values);
       } else {
-        await actions.editArticle({ id: article.id, values });
+        await axios.put(getApiUrl('article', { id: article.id }), values);
       }
       history.push(getUrl('articles'));
     } catch (e) {
@@ -70,9 +59,7 @@ export default ({ article = emptyObject, type = 'add' }) => {
         <Link to={getUrl('articles')} className="mr-10">
           Back
         </Link>
-        <button className="btn btn-primary" type="submit">
-          Save
-        </button>
+        <SubmitBtn className="btn btn-primary">Save</SubmitBtn>
       </Form>
     </Formik>
   );

@@ -1,23 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from 'effector-react';
-import { asyncStates } from '../lib/utils';
-import { useContext } from '../lib/context';
+import { useContext, useSWR } from '../lib/utils';
 import { getUrl } from '../lib/routes';
 
 const Tags = () => {
-  const { $session, $tags, actions } = useContext();
-  const tags = useStore($tags);
+  const { $session, getApiUrl, axios, ssrData } = useContext();
   const { isSignedIn } = useStore($session);
+  const { data: tags, mutate } = useSWR(getApiUrl('tags'), { initialData: ssrData.tags });
   console.log(tags);
 
-  const deleteTag = id => async () => actions.deleteTag(id);
-
-  React.useEffect(() => {
-    if (tags.status === asyncStates.idle) {
-      actions.loadTags();
-    }
-  }, []);
+  const deleteTag = id => async () => {
+    await axios.delete(getApiUrl('tag', { id }));
+    mutate();
+  };
 
   return (
     <div>
@@ -37,7 +33,7 @@ const Tags = () => {
           </tr>
         </thead>
         <tbody>
-          {tags.data.map(tag => (
+          {tags?.map(tag => (
             <tr key={tag.id}>
               <td>{tag.name}</td>
               {isSignedIn && (

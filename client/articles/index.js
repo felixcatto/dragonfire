@@ -1,39 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from 'effector-react';
-import { useContext } from '../lib/context';
+import { useContext, useSWR } from '../lib/utils';
 import { getUrl } from '../lib/routes';
-import { loadArticlesData } from '../common/generalSlice';
-import { asyncStates } from '../lib/utils';
 
 const Articles = () => {
-  const {
-    $session,
-    $articles,
-    $users,
-    $tags,
-    $articlesTags,
-    $articlesList,
-    actions,
-  } = useContext();
-
-  const articles = useStore($articles);
-  const users = useStore($users);
-  const tags = useStore($tags);
-  const articlesTags = useStore($articlesTags);
-  const articlesList = useStore($articlesList);
+  const { $session, getApiUrl, axios, ssrData } = useContext();
   const { isSignedIn, isBelongsToUser } = useStore($session);
+  const { data: articles, mutate } = useSWR(getApiUrl('articles'), {
+    initialData: ssrData.articles,
+  });
+  console.log(articles);
 
-  React.useEffect(() => {
-    loadArticlesData({ articles, users, tags, articlesTags, actions });
-  }, []);
-
-  if ([users, articles, tags, articlesTags].some(el => el.status !== asyncStates.resolved)) {
-    return null;
-  }
-  console.log(articlesList);
-
-  const deleteArticle = id => async () => actions.deleteArticle(id);
+  const deleteArticle = id => async () => {
+    await axios.delete(getApiUrl('article', { id }));
+    mutate();
+  };
 
   return (
     <div>
@@ -56,7 +38,7 @@ const Articles = () => {
           </tr>
         </thead>
         <tbody>
-          {articlesList.map(article => (
+          {articles?.map(article => (
             <tr key={article.id}>
               <td>{article.title}</td>
               <td className="text-justify">{article.text}</td>

@@ -2,7 +2,7 @@ import { isEmpty, difference } from 'lodash';
 import comments from './comments';
 import { validate, checkSignedIn, checkBelongsToUser, isSignedIn } from '../lib/utils';
 
-export const getArticles = async Article => Article.query();
+export const getArticles = async Article => Article.query().withGraphFetched('[author, tags]');
 
 export default async app => {
   const { Article } = app.objection;

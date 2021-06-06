@@ -1,24 +1,16 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { isEmpty } from 'lodash';
-import { useStore } from 'effector-react';
-import { useContext } from '../lib/context';
+import { useContext } from '../lib/utils';
 import Form from './form';
-import { emptyObject, useImmerState } from '../lib/utils';
 
 const EditTag = () => {
-  const { getApiUrl, axios, $tags } = useContext();
+  const { getApiUrl, axios } = useContext();
   const { id } = useParams();
-  const { data: tags } = useStore($tags);
-  const [state, setState] = useImmerState({
-    tag: tags.find(tag => tag.id === +id) || emptyObject,
-  });
-  const { tag } = state;
+  const [tag, setTag] = React.useState(null);
 
   React.useEffect(() => {
-    if (isEmpty(tag)) {
-      axios({ url: getApiUrl('tag', { id }) }).then(data => setState({ tag: data }));
-    }
+    axios.get(getApiUrl('tag', { id })).then(data => setTag(data));
   }, []);
 
   return (

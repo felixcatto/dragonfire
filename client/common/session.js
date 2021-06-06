@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
-import { useContext } from '../lib/context';
+import { useContext, ErrorMessage, Field, SubmitBtn } from '../lib/utils';
 import { getUrl } from '../lib/routes';
-import { ErrorMessage, Field } from '../lib/utils';
 
 const LoginForm = () => {
   const { actions } = useContext();
@@ -45,9 +44,7 @@ const LoginForm = () => {
           <Link to={getUrl('home')} className="mr-10">
             Cancel
           </Link>
-          <button className="btn btn-primary" type="submit">
-            Sign in
-          </button>
+          <SubmitBtn className="btn btn-primary">Sign in</SubmitBtn>
         </Form>
       </Formik>
     </div>

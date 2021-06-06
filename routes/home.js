@@ -16,13 +16,13 @@ export default async app => {
     const { template, getApiUrl, routes, isDevelopment, manifest } = app.ctx;
     const { currentUser } = request;
 
-    let routeData = {};
-    const getRouteData = routesInitialData[request.url];
-    if (getRouteData) {
-      routeData = await getRouteData(app);
+    let ssrData = {};
+    const getSSRData = routesInitialData[request.url];
+    if (getSSRData) {
+      ssrData = await getSSRData(app);
     }
 
-    const initialState = { routes, getApiUrl, currentUser, ...routeData };
+    const initialState = { routes, getApiUrl, currentUser, ssrData };
 
     const appPath = path.resolve(__dirname, '../client/main/app.js');
     if (isDevelopment) {

@@ -2,29 +2,20 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { isEmpty } from 'lodash';
 import { useStore } from 'effector-react';
-import { useContext } from '../lib/context';
+import { useContext, useImmerState } from '../lib/utils';
 import Form from './form';
-import { emptyObject, qb } from '../lib/utils';
 
 const EditArticle = () => {
-  const { getApiUrl, axios, $articles, $articlesTags, $tags, $session } = useContext();
+  const { getApiUrl, axios, $session } = useContext();
   const { id } = useParams();
-  const { data: articles } = useStore($articles);
-  const { data: articlesTags } = useStore($articlesTags);
-  const { data: tags } = useStore($tags);
   const { isBelongsToUser } = useStore($session);
-
-  const cashArticle = articles.find(el => el.id === +id);
-  if (cashArticle) {
-    cashArticle.tags = qb(cashArticle).rowToMany(articlesTags, tags, 'id=article_id, tag_id=id');
-  }
-
-  const [article, setArticle] = React.useState(cashArticle || emptyObject);
+  const [{ article, tags }, setState] = useImmerState({ article: null, tags: [] });
 
   React.useEffect(() => {
-    if (isEmpty(article)) {
-      axios({ url: getApiUrl('article', { id }) }).then(data => setArticle(data));
-    }
+    Promise.all([
+      axios.get(getApiUrl('article', { id })),
+      axios.get(getApiUrl('tags')),
+    ]).then(([articleData, tagsData]) => setState({ article: articleData, tags: tagsData }));
   }, []);
 
   if (isEmpty(article)) return null;
@@ -33,7 +24,7 @@ const EditArticle = () => {
   return (
     <div>
       <h3>Edit Article</h3>
-      <Form type="edit" article={article} />
+      <Form type="edit" article={article} tags={tags} />
     </div>
   );
 };

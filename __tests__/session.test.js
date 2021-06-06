@@ -1,4 +1,3 @@
-import { omit } from 'lodash';
 import getApp from '../main';
 import usersFixture from './fixtures/users';
 

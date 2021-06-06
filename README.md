@@ -1,6 +1,6 @@
 # Description
 
-SPA app using  react + effector + fastify + objection orm. Traditional blog with ability to add articles, tags and comments. Also have users and authentification
+SPA app using  react + swr + fastify + objection orm. Traditional blog with ability to add articles, tags and comments. Also have users and authentification
 
 ### Features
 
@@ -13,7 +13,7 @@ SPA app using  react + effector + fastify + objection orm. Traditional blog with
 
 ### Cons
 
-* 3x harder frontend, because of need to duplicate database logic. On server side ORM do this work, but on client side we need to code it by hand :cold_sweat:. Fat app.js, fat views
+* 3x harder frontend, because of need to duplicate database logic. On server side ORM do this work, but on client side we need to code it by hand :cold_sweat:. Fat app.js, fat views. Checkout [this branch](https://github.com/felixcatto/dragonfire/tree/effector). But SWR mitigates complexity from 3x -> 1.33x, which is huge relief :innocent:. Yes, we still need to write 5-10 lines of code in each view, but all this db duplication logic is gone and we get a free cache when moving from page to page.
 
 ### Commands
 

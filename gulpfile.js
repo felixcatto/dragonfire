@@ -9,8 +9,8 @@ const readline = require('readline');
 const { makeServer, listen } = require('blunt-livereload');
 const stream = require('stream');
 const { promisify } = require('util');
-const webpackConfig = require('./webpack.config.js');
-const babelConfig = require('./babelconfig.js');
+const webpackConfig = require('./webpack.config');
+const babelConfig = require('./babelconfig');
 
 const isDevelopment = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
 const finished = promisify(stream.finished);
