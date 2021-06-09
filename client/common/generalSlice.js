@@ -1,34 +1,33 @@
 import { combine, createEffect, createStore } from 'effector';
 import { asyncStates, qb } from '../lib/utils';
 
-export const loadArticlesData = async ({ articles, users, tags, articlesTags, actions }) =>
+export const loadArticlesData = async ({
+  articlesStatus,
+  usersStatus,
+  tagsStatus,
+  articlesTagsStatus,
+  actions,
+}) =>
   Promise.all(
     [
-      { store: articles, loadStore: actions.loadArticles },
-      { store: tags, loadStore: actions.loadTags },
-      { store: users, loadStore: actions.loadUsers },
-      { store: articlesTags, loadStore: actions.loadArticlesTags },
+      { status: articlesStatus, loadStore: actions.loadArticles },
+      { status: usersStatus, loadStore: actions.loadUsers },
+      { status: tagsStatus, loadStore: actions.loadTags },
+      { status: articlesTagsStatus, loadStore: actions.loadArticlesTags },
     ]
-      .filter(el => el.store.status === asyncStates.idle)
+      .filter(el => el.status === asyncStates.idle)
       .map(el => el.loadStore())
   );
 
 export const makeArticlesList = stores =>
-  combine(stores, ([users, articles, tags, articlesTags]) => {
-    if ([users, articles, tags, articlesTags].some(el => el.status !== asyncStates.resolved)) {
-      return [];
-    }
-    const usersList = users.data;
-    const articlesList = articles.data;
-    const tagsList = tags.data;
-    const articlesTagsList = articlesTags.data;
-
-    return articlesList.map(article => ({
-      ...article,
-      author: qb(article).rowToOne(usersList, 'author_id=id'),
-      tags: qb(article).rowToMany(articlesTagsList, tagsList, 'id=article_id, tag_id=id'),
-    }));
-  });
+  combine(
+    stores.map(store => store.map(el => el.data)),
+    ([users, articles, tags, articlesTags]) => articles.map(article => ({
+        ...article,
+        author: qb(article).rowToOne(users, 'author_id=id'),
+        tags: qb(article).rowToMany(articlesTags, tags, 'id=article_id, tag_id=id'),
+      }))
+  );
 
 export const makeArticlesTagsActions = ({ getApiUrl, axios }) => ({
   loadArticlesTags: createEffect(async () => axios.get(getApiUrl('articlesTags'))),

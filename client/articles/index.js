@@ -17,20 +17,21 @@ const Articles = () => {
     actions,
   } = useContext();
 
-  const articles = useStore($articles);
-  const users = useStore($users);
-  const tags = useStore($tags);
-  const articlesTags = useStore($articlesTags);
+  const articlesStatus = useStore($articles.map(el => el.status));
+  const usersStatus = useStore($users.map(el => el.status));
+  const tagsStatus = useStore($tags.map(el => el.status));
+  const articlesTagsStatus = useStore($articlesTags.map(el => el.status));
   const articlesList = useStore($articlesList);
   const { isSignedIn, isBelongsToUser } = useStore($session);
 
   React.useEffect(() => {
-    loadArticlesData({ articles, users, tags, articlesTags, actions });
+    loadArticlesData({ articlesStatus, usersStatus, tagsStatus, articlesTagsStatus, actions });
   }, []);
 
-  if ([users, articles, tags, articlesTags].some(el => el.status !== asyncStates.resolved)) {
-    return null;
-  }
+  const isDataLoaded = [articlesStatus, usersStatus, tagsStatus, articlesTagsStatus].every(
+    status => status === asyncStates.resolved
+  );
+  if (!isDataLoaded) return null;
   console.log(articlesList);
 
   const deleteArticle = id => async () => actions.deleteArticle(id);
