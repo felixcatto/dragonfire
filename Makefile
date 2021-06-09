@@ -22,6 +22,11 @@ madge: madge-build
 madge-build:
 	npx gulp buildForMadge
 
+madge-project-structure: madge-build
+	npx madge --image project-structure-v?.svg dist/main/index.js dist/client/main/index.js
+	rm public/img/project-structure-*
+	mv project-structure-v?.svg public/img
+
 madge-depends-on-file:
 	madge --exclude '^dist/*' --depends $(arg) .
 

@@ -4,7 +4,6 @@ import cn from 'classnames';
 import { useStore } from 'effector-react';
 import originalAxios from 'axios';
 import { SWRConfig } from 'swr';
-import Context from '../lib/context';
 import {
   userRolesToIcons,
   NavLink,
@@ -12,6 +11,7 @@ import {
   makeSessionInfo,
   ProtectedRoute,
   useContext,
+  Context,
 } from '../lib/utils';
 import { routes, getUrl } from '../lib/routes';
 import Home from '../common/home';

@@ -10,6 +10,7 @@ import { roles } from '../../lib/sharedUtils';
 import Context from './context';
 
 export * from '../../lib/sharedUtils';
+export { Context };
 
 export const useContext = () => React.useContext(Context);
 
