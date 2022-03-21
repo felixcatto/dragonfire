@@ -1,26 +1,10 @@
+import { Form, Formik } from 'formik';
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { Formik, Form } from 'formik';
-import { useContext, ErrorMessage, Field, roles, emptyObject, SubmitBtn } from '../lib/utils';
+import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
+import { emptyObject, ErrorMessage, Field, roles, SubmitBtn } from '../lib/utils';
 
-const UserForm = ({ user = emptyObject, type = 'add' }) => {
-  const history = useHistory();
-  const { axios, getApiUrl } = useContext();
-
-  const onSubmit = async (values, fmActions) => {
-    try {
-      if (type === 'add') {
-        await axios.post(getApiUrl('users'), values);
-      } else {
-        await axios.put(getApiUrl('user', { id: user.id }), values);
-      }
-      history.push(getUrl('users'));
-    } catch (e) {
-      fmActions.setStatus({ apiErrors: e.response.data.errors });
-    }
-  };
-
+const UserForm = ({ onSubmit, user = emptyObject }) => {
   return (
     <Formik
       initialValues={{
@@ -30,7 +14,6 @@ const UserForm = ({ user = emptyObject, type = 'add' }) => {
         password: '',
       }}
       onSubmit={onSubmit}
-      initialStatus={{ apiErrors: {} }}
     >
       <Form>
         <div className="row mb-20">

@@ -10,7 +10,6 @@ const Articles = () => {
   const { data: articles, mutate } = useSWR(getApiUrl('articles'), {
     initialData: ssrData.articles,
   });
-  console.log(articles);
 
   const deleteArticle = id => async () => {
     await axios.delete(getApiUrl('article', { id }));

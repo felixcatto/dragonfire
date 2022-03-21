@@ -1,39 +1,22 @@
-import React from 'react';
-import { Formik, Form } from 'formik';
-import { Link } from 'react-router-dom';
-import { omit } from 'lodash';
 import { useStore } from 'effector-react';
-import { useContext, ErrorMessage, Field, emptyObject, SubmitBtn } from '../lib/utils';
+import { Form, Formik } from 'formik';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
+import { emptyObject, ErrorMessage, Field, SubmitBtn, useContext } from '../lib/utils';
 
 export default React.forwardRef((props, ref) => {
-  const { afterSubmit, articleId, comment = emptyObject, type = 'add' } = props;
-  const { $session, axios, getApiUrl } = useContext();
+  const { onSubmit, comment = emptyObject, type = 'add' } = props;
+  const { $session } = useContext();
   const { isSignedIn } = useStore($session);
   const isNewCommentForm = type === 'add';
   const canShowGuestName =
     (isNewCommentForm && !isSignedIn) || (!isNewCommentForm && !comment.author_id);
 
-  const onSubmit = async (values, fmActions) => {
-    const newValues = canShowGuestName ? values : omit(values, 'guest_name');
-    try {
-      if (isNewCommentForm) {
-        await axios.post(getApiUrl('comments', { id: articleId }), newValues);
-        fmActions.setFieldValue('text', '');
-      } else {
-        await axios.put(getApiUrl('comment', { id: articleId, commentId: comment.id }), newValues);
-      }
-      await afterSubmit();
-    } catch (e) {
-      fmActions.setStatus({ apiErrors: e.response.data.errors });
-    }
-  };
-
   return (
     <Formik
       initialValues={{ guest_name: comment.guest_name, text: comment.text }}
       onSubmit={onSubmit}
-      initialStatus={{ apiErrors: {} }}
     >
       <Form ref={ref}>
         <div className="row">

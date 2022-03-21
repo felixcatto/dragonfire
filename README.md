@@ -20,8 +20,9 @@ SPA app using  react + swr + fastify + objection orm. Traditional blog with abil
 *Development*
 ```
 make database-build # only first time
-make database-up 
-make database-seed # for prepopulate database, only first time
+make database-up
+make migrate # only first time, create database structure
+make database-seed # only first time, for prepopulate database
 make start
 ```
 

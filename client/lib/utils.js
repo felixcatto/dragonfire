@@ -1,9 +1,9 @@
+import { useFormikContext } from 'formik';
+import produce from 'immer';
+import { isFunction, omit } from 'lodash';
+import { compile } from 'path-to-regexp';
 import React, { useState } from 'react';
 import { NavLink as RouterNavLink, Route } from 'react-router-dom';
-import { compile } from 'path-to-regexp';
-import { isFunction, omit } from 'lodash';
-import produce from 'immer';
-import { useFormikContext, getIn } from 'formik';
 import Select from 'react-select';
 import useSWROriginal from 'swr';
 import { roles } from '../../lib/sharedUtils';
@@ -14,30 +14,26 @@ export { Context };
 
 export const useContext = () => React.useContext(Context);
 
+export const FormContext = React.createContext(null);
+
+export const FormWrapper = ({ apiErrors, setApiErrors, children }) => (
+  <FormContext.Provider value={{ apiErrors, setApiErrors }}>{children}</FormContext.Provider>
+);
+
 export const ErrorMessage = ({ name }) => {
-  const { status, touched, errors } = useFormikContext();
-  const makeHtmlError = errorMsg => <div className="error">{errorMsg}</div>;
-  const fieldTouched = getIn(touched, name);
-  const frontendError = getIn(errors, name);
-  const backendError = getIn(status, ['apiErrors', name]);
-  if (frontendError && fieldTouched) {
-    return makeHtmlError(frontendError);
-  }
-
-  if (backendError) {
-    return makeHtmlError(backendError);
-  }
-
-  return null;
+  const { apiErrors } = React.useContext(FormContext);
+  const error = apiErrors[name];
+  return error ? <div className="error">{error}</div> : null;
 };
 
 export const Field = props => {
-  const { values, handleBlur: onBlur, handleChange, setStatus, status } = useFormikContext();
+  const { apiErrors, setApiErrors } = React.useContext(FormContext);
+  const { values, handleBlur: onBlur, handleChange } = useFormikContext();
   const value = values[props.name];
   const { as, children, ...restProps } = props;
   const asElement = as || 'input';
   const onChange = e => {
-    setStatus(omit(status, `apiErrors.${e.target.name}`));
+    setApiErrors(omit(apiErrors, e.target.name));
     handleChange(e);
   };
 

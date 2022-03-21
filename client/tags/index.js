@@ -8,7 +8,6 @@ const Tags = () => {
   const { $session, getApiUrl, axios, ssrData } = useContext();
   const { isSignedIn } = useStore($session);
   const { data: tags, mutate } = useSWR(getApiUrl('tags'), { initialData: ssrData.tags });
-  console.log(tags);
 
   const deleteTag = id => async () => {
     await axios.delete(getApiUrl('tag', { id }));

@@ -1,32 +1,12 @@
+import { Form, Formik } from 'formik';
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { Formik, Form } from 'formik';
-import { useContext, ErrorMessage, Field, emptyObject, SubmitBtn } from '../lib/utils';
+import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
+import { emptyObject, ErrorMessage, Field, SubmitBtn } from '../lib/utils';
 
-export default ({ tag = emptyObject, type = 'add' }) => {
-  const history = useHistory();
-  const { axios, getApiUrl } = useContext();
-
-  const onSubmit = async (values, fmActions) => {
-    try {
-      if (type === 'add') {
-        await axios.post(getApiUrl('tags'), values);
-      } else {
-        await axios.put(getApiUrl('tag', { id: tag.id }), values);
-      }
-      history.push(getUrl('tags'));
-    } catch (e) {
-      fmActions.setStatus({ apiErrors: e.response.data.errors });
-    }
-  };
-
+export default ({ onSubmit, tag = emptyObject }) => {
   return (
-    <Formik
-      initialValues={{ name: tag.name }}
-      onSubmit={onSubmit}
-      initialStatus={{ apiErrors: {} }}
-    >
+    <Formik initialValues={{ name: tag.name }} onSubmit={onSubmit}>
       <Form>
         <div className="row mb-20">
           <div className="col-6">

@@ -24,9 +24,11 @@ rules:
   implicit-arrow-linebreak: 0
   object-curly-newline: 0
   operator-linebreak: 0
+  indent: 0
   # END
   consistent-return: 0
   import/prefer-default-export: 0
+  arrow-body-style: 0
   no-console: 1
   arrow-parens:
     - error

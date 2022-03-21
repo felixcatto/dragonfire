@@ -1,31 +1,15 @@
+import { Form, Formik } from 'formik';
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { Formik, Form } from 'formik';
-import { useContext, ErrorMessage, Field, emptyObject, MultiSelect, SubmitBtn } from '../lib/utils';
+import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
+import { emptyObject, ErrorMessage, Field, MultiSelect, SubmitBtn } from '../lib/utils';
 
-export default ({ tags, article = emptyObject, type = 'add' }) => {
-  const history = useHistory();
-  const { axios, getApiUrl } = useContext();
-
+export default ({ onSubmit, tags, article = emptyObject }) => {
   const transformTag = tag => ({ value: tag.id, label: tag.name });
   const tagsForSelect = tags.map(transformTag);
   const articleTags = article.tags || [];
   const selectedTags = articleTags.map(transformTag);
   const tagIds = articleTags.map(tag => tag.id);
-
-  const onSubmit = async (values, fmActions) => {
-    try {
-      if (type === 'add') {
-        await axios.post(getApiUrl('articles'), values);
-      } else {
-        await axios.put(getApiUrl('article', { id: article.id }), values);
-      }
-      history.push(getUrl('articles'));
-    } catch (e) {
-      fmActions.setStatus({ apiErrors: e.response.data.errors });
-    }
-  };
 
   return (
     <Formik
@@ -35,7 +19,6 @@ export default ({ tags, article = emptyObject, type = 'add' }) => {
         tagIds,
       }}
       onSubmit={onSubmit}
-      initialStatus={{ apiErrors: {} }}
     >
       <Form>
         <div className="row mb-20">

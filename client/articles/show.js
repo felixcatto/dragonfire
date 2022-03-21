@@ -1,11 +1,18 @@
-import React from 'react';
 import { format, parseISO } from 'date-fns';
-import { isEmpty } from 'lodash';
-import { useParams } from 'react-router-dom';
 import { useStore } from 'effector-react';
-import { userRolesToIcons, roles, useImmerState, useContext, useSWR } from '../lib/utils';
-import s from './styles.module.scss';
+import { isEmpty, omit } from 'lodash';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import CommentForm from '../comments/form';
+import {
+  FormWrapper,
+  roles,
+  useContext,
+  useImmerState,
+  userRolesToIcons,
+  useSWR,
+} from '../lib/utils';
+import s from './styles.module.scss';
 
 const ShowComment = ({ comment, articleId, isBelongsToUser, editComment, deleteComment }) => (
   <div className="mb-15">
@@ -31,7 +38,7 @@ const ShowComment = ({ comment, articleId, isBelongsToUser, editComment, deleteC
           <i
             className="fa fa-trash-alt fa_big fa_link"
             title="delete"
-            onClick={deleteComment({ id: articleId, commentId: comment.id })}
+            onClick={deleteComment({ articleId, commentId: comment.id })}
           ></i>
         </div>
       )}
@@ -41,7 +48,7 @@ const ShowComment = ({ comment, articleId, isBelongsToUser, editComment, deleteC
   </div>
 );
 
-const EditComment = ({ comment, articleId, hideEditedComment, afterSaveComment }) => {
+const EditComment = ({ comment, cancelEditingComment, saveEditedComment }) => {
   const formRef = React.useRef(null);
   const saveComment = () => formRef.current.requestSubmit();
 
@@ -60,42 +67,63 @@ const EditComment = ({ comment, articleId, hideEditedComment, afterSaveComment }
           </div>
         )}
         <div className="ml-30">
-          <i className="fa fa-undo-alt fa_big fa_link" title="edit" onClick={hideEditedComment}></i>
+          <i
+            className="fa fa-undo-alt fa_big fa_link"
+            title="edit"
+            onClick={cancelEditingComment}
+          ></i>
           <i className="fa fa-save fa_big fa_link" title="save" onClick={saveComment}></i>
         </div>
       </div>
-      <CommentForm
-        type="edit"
-        comment={comment}
-        articleId={articleId}
-        ref={formRef}
-        afterSubmit={afterSaveComment}
-      />
+      <CommentForm type="edit" comment={comment} ref={formRef} onSubmit={saveEditedComment} />
       <div className="text-light">{format(parseISO(comment.created_at), 'dd MMM yyyy HH:mm')}</div>
     </div>
   );
 };
 
 const ShowArticle = () => {
-  const { id } = useParams();
+  const { id: articleId } = useParams();
   const { $session, axios, getApiUrl } = useContext();
-  const { isBelongsToUser } = useStore($session);
-  const { data: article, mutate } = useSWR(getApiUrl('article', { id }));
+  const { isBelongsToUser, isSignedIn } = useStore($session);
+  const { data: article, mutate } = useSWR(getApiUrl('article', { id: articleId }));
   const [{ editedCommentId }, setState] = useImmerState({ editedCommentId: null });
+  const [apiErrorsForNewCommentForm, setApiErrorsForNewCommentForm] = React.useState({});
+  const [apiErrorsForEditCommentForm, setApiErrorsForEditCommentForm] = React.useState({});
 
-  const afterSaveComment = async () => {
-    await mutate();
-    setState({ editedCommentId: null });
-  };
-  const deleteComment = ({ id: articleId, commentId }) => async () => {
-    await axios.delete(getApiUrl('comment', { id: articleId, commentId }));
-    await mutate();
-  };
+  const deleteComment =
+    ({ articleId: id, commentId }) =>
+    async () => {
+      await axios.delete(getApiUrl('comment', { id, commentId }));
+      await mutate();
+    };
   const editComment = commentId => () => setState({ editedCommentId: commentId });
-  const hideEditedComment = () => setState({ editedCommentId: null });
+  const cancelEditingComment = () => setState({ editedCommentId: null });
+
+  const saveNewComment = async (values, fmActions) => {
+    const canShowGuestName = !isSignedIn;
+    const newValues = canShowGuestName ? values : omit(values, 'guest_name');
+    try {
+      await axios.post(getApiUrl('comments', { id: articleId }), newValues);
+      fmActions.setFieldValue('text', '');
+      await mutate();
+    } catch (e) {
+      setApiErrorsForNewCommentForm(e.response.data.errors);
+    }
+  };
+
+  const saveEditedComment = comment => async values => {
+    const canShowGuestName = !comment.author_id;
+    const newValues = canShowGuestName ? values : omit(values, 'guest_name');
+    try {
+      await axios.put(getApiUrl('comment', { id: articleId, commentId: comment.id }), newValues);
+      setState({ editedCommentId: null });
+      await mutate();
+    } catch (e) {
+      setApiErrorsForEditCommentForm(e.response.data.errors);
+    }
+  };
 
   if (isEmpty(article)) return null;
-  console.log(article);
 
   return (
     <div>
@@ -108,7 +136,9 @@ const ShowArticle = () => {
           </div>
         )}
       </div>
+
       <p className="text-justify mb-30">{article.text}</p>
+
       {!isEmpty(article.tags) && (
         <div className={s.articleTags}>
           <div className="text-light mr-10">Tags:</div>
@@ -122,32 +152,42 @@ const ShowArticle = () => {
 
       {article.comments && (
         <div className="mb-30">
-          {article.comments.map(comment =>
-            comment.id === editedCommentId ? (
-              <EditComment
-                key={comment.id}
-                comment={comment}
-                articleId={id}
-                hideEditedComment={hideEditedComment}
-                afterSaveComment={afterSaveComment}
-              />
-            ) : (
-              <ShowComment
-                key={comment.id}
-                comment={comment}
-                articleId={id}
-                isBelongsToUser={isBelongsToUser}
-                editComment={editComment}
-                deleteComment={deleteComment}
-              />
-            )
-          )}
+          <FormWrapper
+            apiErrors={apiErrorsForEditCommentForm}
+            setApiErrors={setApiErrorsForEditCommentForm}
+          >
+            {article.comments.map(comment =>
+              comment.id === editedCommentId ? (
+                <EditComment
+                  key={comment.id}
+                  comment={comment}
+                  articleId={articleId}
+                  cancelEditingComment={cancelEditingComment}
+                  saveEditedComment={saveEditedComment(comment)}
+                />
+              ) : (
+                <ShowComment
+                  key={comment.id}
+                  comment={comment}
+                  articleId={articleId}
+                  isBelongsToUser={isBelongsToUser}
+                  editComment={editComment}
+                  deleteComment={deleteComment}
+                />
+              )
+            )}
+          </FormWrapper>
         </div>
       )}
 
       <div className="mb-10">Leave a comment</div>
 
-      <CommentForm afterSubmit={mutate} articleId={id} />
+      <FormWrapper
+        apiErrors={apiErrorsForNewCommentForm}
+        setApiErrors={setApiErrorsForNewCommentForm}
+      >
+        <CommentForm onSubmit={saveNewComment} />
+      </FormWrapper>
     </div>
   );
 };
