@@ -31,12 +31,13 @@ madge-depends-on-file:
 	madge --exclude '^dist/*' --depends $(arg) .
 
 lint:
-	npx eslint --quiet .
+	npx tsc
+	npx eslint .
 
-lint-fix:
-	npx eslint --fix --quiet .
+lint-ts:
+	npx tsc
 
-lint-with-warn:
+lint-es:
 	npx eslint .
 
 test:

@@ -7,7 +7,8 @@ import { isBelongsToUser, isAdmin, isSignedIn } from './sharedUtils';
 
 export * from './sharedUtils';
 
-export const clearCache = (rootModulePath, { ignoreRegex = null } = {}) => {
+export const clearCache = (rootModulePath, options = {} as any) => {
+  const { ignoreRegex = null } = options;
   const clearCacheInner = moduleAbsPath => {
     const imodule = require.cache[moduleAbsPath];
     if (!imodule) return;
@@ -88,18 +89,20 @@ const getYupErrors = e => {
   return e.message; // no object?
 };
 
-export const validate = (schema, payloadType = 'body') => async (request, reply) => {
-  const payload = payloadType === 'query' ? request.query : request.body;
+export const validate =
+  (schema, payloadType = 'body') =>
+  async (request, reply) => {
+    const payload = payloadType === 'query' ? request.query : request.body;
 
-  try {
-    request.data = schema.validateSync(payload, {
-      abortEarly: false,
-      stripUnknown: true,
-    });
-  } catch (e) {
-    reply.code(400).send({ message: 'Input is not valid', errors: getYupErrors(e) });
-  }
-};
+    try {
+      request.data = schema.validateSync(payload, {
+        abortEarly: false,
+        stripUnknown: true,
+      });
+    } catch (e) {
+      reply.code(400).send({ message: 'Input is not valid', errors: getYupErrors(e) });
+    }
+  };
 
 export const requiredIfExists = () => [
   'requiredIfExists',

@@ -18,10 +18,7 @@ module.exports = {
         },
       ],
       '@babel/preset-react',
-    ],
-    plugins: [
-      '@babel/plugin-proposal-optional-chaining',
-      ['@babel/plugin-proposal-pipeline-operator', { proposal: 'minimal' }],
+      '@babel/preset-typescript',
     ],
   },
 
@@ -36,11 +33,10 @@ module.exports = {
         },
       ],
       '@babel/preset-react',
+      '@babel/preset-typescript',
     ],
 
     plugins: [
-      '@babel/plugin-proposal-optional-chaining',
-      ['@babel/plugin-proposal-pipeline-operator', { proposal: 'minimal' }],
       [
         'css-modules-transform',
         {

@@ -4,7 +4,7 @@ import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { clearCache, supressConsoleLog } from '../lib/utils';
 import routesInitialData from '../lib/routesInitialData';
-import '../client/main/app';
+import '../client/main/app'; // TODO: why i wrote it? Seems only for madge graph
 
 export default async app => {
   app.all('/api/*', async (request, reply) => {
@@ -39,15 +39,13 @@ export default async app => {
     const initialStateScript = `
       <script>window.INITIAL_STATE = ${JSON.stringify(initialState)}</script>`;
 
-    const html =
-      template
-        .replace('{{content}}', renderedComponent)
-        .replace('{{initialState}}', initialStateScript)
-      |> (v =>
-        Object.keys(manifest).reduce(
-          (acc, filename) => acc.replace(`{{${filename}}}`, manifest[filename]),
-          v
-        ));
+    const tmpHtml = template
+      .replace('{{content}}', renderedComponent)
+      .replace('{{initialState}}', initialStateScript);
+    const html = Object.keys(manifest).reduce(
+      (acc, filename) => acc.replace(`{{${filename}}}`, manifest[filename]),
+      tmpHtml
+    );
 
     reply.type('text/html');
     reply.send(html);

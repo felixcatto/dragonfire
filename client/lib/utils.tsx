@@ -12,9 +12,9 @@ import Context from './context';
 export * from '../../lib/sharedUtils';
 export { Context };
 
-export const useContext = () => React.useContext(Context);
+export const useContext: any = () => React.useContext(Context);
 
-export const FormContext = React.createContext(null);
+export const FormContext: any = React.createContext(null);
 
 export const FormWrapper = ({ apiErrors, setApiErrors, children }) => (
   <FormContext.Provider value={{ apiErrors, setApiErrors }}>{children}</FormContext.Provider>
@@ -28,7 +28,7 @@ export const ErrorMessage = ({ name }) => {
 
 export const Field = props => {
   const { apiErrors, setApiErrors } = React.useContext(FormContext);
-  const { values, handleBlur: onBlur, handleChange } = useFormikContext();
+  const { values, handleBlur: onBlur, handleChange }: any = useFormikContext();
   const value = values[props.name];
   const { as, children, ...restProps } = props;
   const asElement = as || 'input';
@@ -67,21 +67,17 @@ export const userRolesToIcons = {
   [roles.guest]: 'fa fa-ghost',
 };
 
-export const makeUrlFor = rawRoutes => {
+export function makeUrlFor<T>(rawRoutes: T) {
   const routes = Object.keys(rawRoutes).reduce(
     (acc, name) => ({ ...acc, [name]: compile(rawRoutes[name]) }),
-    {}
+    {} as any
   );
 
-  return (name, args, opts) => {
+  return (name: keyof T, args = {}, opts = {}) => {
     const toPath = routes[name];
-    if (!toPath) {
-      throw new Error(`Route with name ${name} is not registered`);
-    }
-
     return toPath(args, opts);
   };
-};
+}
 
 export const NavLink = ({ ...restProps }) => (
   <RouterNavLink
@@ -107,7 +103,7 @@ export const useImmerState = initialState => {
   return [state, setImmerState.current];
 };
 
-export const emptyObject = new Proxy(
+export const emptyObject: any = new Proxy(
   {},
   {
     get() {
@@ -116,7 +112,7 @@ export const emptyObject = new Proxy(
   }
 );
 
-export const ProtectedRoute = ({ canRender, ...restProps }) =>
+export const ProtectedRoute: any = ({ canRender, ...restProps }) =>
   canRender || canRender === 'maybe' ? <Route {...restProps} /> : '403 forbidden';
 
 export const qb = mainRow => ({
@@ -147,7 +143,7 @@ export const usePageSwitch = ({ pages, components, state }) => {
   };
 };
 
-export const useSWR = (url, config = {}) => {
+export const useSWR = (url, config = {} as any) => {
   const { isFirstRender } = useContext();
   const revalidateOnMount = !config.initialData || (config.initialData && !isFirstRender.current);
   return useSWROriginal(url, { ...config, revalidateOnMount });

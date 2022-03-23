@@ -3,12 +3,17 @@ env:
   browser: true
   jest: true
 
-parser: babel-eslint
-
+root: true
+parser: '@typescript-eslint/parser'
+plugins: ['@typescript-eslint']
 extends:
-  - 'airbnb-base'
-  - 'plugin:react/recommended'
-  - 'plugin:react-hooks/recommended'
+  - eslint:recommended
+  - plugin:import/recommended
+  - plugin:import/typescript # this line does the trick
+  - 'plugin:@typescript-eslint/recommended'
+
+# extends:
+#   - 'airbnb-base'
 
 ignorePatterns:
   - '/dist'
@@ -18,37 +23,12 @@ settings:
     version: '16.13.1'
 
 rules:
-  # Formatting done by Prettier
-  function-paren-newline: 0
-  no-confusing-arrow: 0
-  implicit-arrow-linebreak: 0
-  object-curly-newline: 0
-  operator-linebreak: 0
-  indent: 0
-  # END
-  consistent-return: 0
-  import/prefer-default-export: 0
-  arrow-body-style: 0
-  no-console: 1
-  arrow-parens:
-    - error
-    - as-needed
-  comma-dangle:
-    - error
-    - objects: only-multiline
-      arrays: only-multiline
-      functions: ignore
-      imports: only-multiline
-  no-param-reassign:
-    - error
-    - props: false
-  no-return-assign:
-    - error
-    - except-parens
-  max-len:
-    - error
-    - ignoreComments: true
-      code: 100
-  camelcase: off
-  react/prop-types: 0
-  react/display-name: 1
+  # no-console: 1
+  import/no-named-as-default: 0
+  '@typescript-eslint/no-var-requires': 0
+  '@typescript-eslint/no-empty-function': 0
+  '@typescript-eslint/no-empty-interface': 0
+  '@typescript-eslint/no-explicit-any': 0
+
+globals:
+  Proxy: true

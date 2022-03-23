@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
 import { emptyObject, ErrorMessage, Field, SubmitBtn, useContext } from '../lib/utils';
 
-export default React.forwardRef((props, ref) => {
-  const { onSubmit, comment = emptyObject, type = 'add' } = props;
+const CommentsForm = ({ onSubmit, comment = emptyObject, type = 'add' }, ref) => {
   const { $session } = useContext();
   const { isSignedIn } = useStore($session);
   const isNewCommentForm = type === 'add';
@@ -48,4 +47,6 @@ export default React.forwardRef((props, ref) => {
       </Form>
     </Formik>
   );
-});
+};
+
+export default React.forwardRef(CommentsForm);

@@ -2,3 +2,5 @@ node_modules/
 dist/
 *.log
 __tests__/tmp.test.js
+*.d.ts
+!lib/declarations.d.ts

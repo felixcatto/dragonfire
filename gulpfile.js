@@ -23,8 +23,8 @@ const paths = {
   },
   serverJs: {
     src: [
-      '*/**/*.js',
       'knexfile.js',
+      '*/**/*.{js,ts,tsx}',
       '!node_modules/**',
       '!dist/**',
       '!client/**',
@@ -36,7 +36,7 @@ const paths = {
     dest: 'dist',
   },
   client: {
-    components: 'client/**/*.js',
+    components: ['client/**/*.{js,ts,tsx}', '!client/**/*.d.ts'],
     css: 'client/css/*',
     cssModules: 'client/**/*.module.scss',
     dest: 'dist/client',
@@ -148,9 +148,9 @@ const watch = async () => {
     .on('change', series(parallel(waitBundleClient, transpileCC), reloadBrowser));
   gulp.watch(paths.client.css).on('change', series(waitBundleClient, reloadBrowser));
   gulp.watch(paths.client.cssModules).on('change', async pathname => {
-    const dirs = pathname.split('/').slice(0, -1);
-    const src = dirs.concat('*').join('/');
-    const dest = `dist/${dirs.join('/')}`;
+    const srcFolder = pathname.split('/').slice(0, -1).join('/');
+    const src = [`${srcFolder}/*`, `!${srcFolder}/*.d.ts`];
+    const dest = `dist/${srcFolder}`;
 
     await Promise.all([transpileFolder(src, dest), waitBundleClient()]);
     reloadBrowser();

@@ -49,7 +49,7 @@ const ShowComment = ({ comment, articleId, isBelongsToUser, editComment, deleteC
 );
 
 const EditComment = ({ comment, cancelEditingComment, saveEditedComment }) => {
-  const formRef = React.useRef(null);
+  const formRef: any = React.useRef(null);
   const saveComment = () => formRef.current.requestSubmit();
 
   return (
@@ -161,7 +161,6 @@ const ShowArticle = () => {
                 <EditComment
                   key={comment.id}
                   comment={comment}
-                  articleId={articleId}
                   cancelEditingComment={cancelEditingComment}
                   saveEditedComment={saveEditedComment(comment)}
                 />

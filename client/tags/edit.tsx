@@ -5,21 +5,21 @@ import { getUrl } from '../lib/routes';
 import { FormWrapper, useContext } from '../lib/utils';
 import Form from './form';
 
-const EditUser = () => {
+const EditTag = () => {
   const history = useHistory();
   const { getApiUrl, axios } = useContext();
   const { id } = useParams();
-  const [user, setUser] = React.useState(null);
+  const [tag, setTag] = React.useState<any>(null);
   const [apiErrors, setApiErrors] = React.useState({});
 
   React.useEffect(() => {
-    axios.get(getApiUrl('user', { id })).then(data => setUser(data));
+    axios.get(getApiUrl('tag', { id })).then(data => setTag(data));
   }, []);
 
   const onSubmit = async values => {
     try {
-      await axios.put(getApiUrl('user', { id: user.id }), values);
-      history.push(getUrl('users'));
+      await axios.put(getApiUrl('tag', { id: tag.id }), values);
+      history.push(getUrl('tags'));
     } catch (e) {
       setApiErrors(e.response.data.errors);
     }
@@ -27,14 +27,14 @@ const EditUser = () => {
 
   return (
     <div>
-      <h3>Edit User</h3>
-      {!isEmpty(user) && (
+      <h3>Edit Tag</h3>
+      {!isEmpty(tag) && (
         <FormWrapper apiErrors={apiErrors} setApiErrors={setApiErrors}>
-          <Form onSubmit={onSubmit} user={user} />
+          <Form onSubmit={onSubmit} tag={tag} />
         </FormWrapper>
       )}
     </div>
   );
 };
 
-export default EditUser;
+export default EditTag;

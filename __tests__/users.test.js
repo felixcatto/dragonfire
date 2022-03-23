@@ -48,8 +48,11 @@ describe('users', () => {
     });
 
     const userFromDb = await User.query().findOne('name', user.name);
-    const expectedUser =
-      omit(user, 'password') |> (v => ({ ...v, password_digest: encrypt(user.password) }));
+    const expectedUser = {
+      ...omit(user, 'password'),
+      password_digest: encrypt(user.password),
+    };
+
     expect(res.statusCode).toBe(201);
     expect(userFromDb).toMatchObject(expectedUser);
   });
