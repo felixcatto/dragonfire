@@ -1,13 +1,14 @@
+import { useStore } from 'effector-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useStore } from 'effector-react';
-import { useContext, useSWR } from '../lib/utils';
 import { getUrl } from '../lib/routes';
+import { ITag } from '../lib/types';
+import { useContext, useSWR } from '../lib/utils';
 
 const Tags = () => {
   const { $session, getApiUrl, axios, ssrData } = useContext();
   const { isSignedIn } = useStore($session);
-  const { data: tags, mutate } = useSWR(getApiUrl('tags'), { initialData: ssrData.tags });
+  const { data: tags, mutate } = useSWR<ITag[]>(getApiUrl('tags'), { initialData: ssrData.tags });
 
   const deleteTag = id => async () => {
     await axios.delete(getApiUrl('tag', { id }));

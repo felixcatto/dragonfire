@@ -4,6 +4,7 @@ import { isEmpty, omit } from 'lodash';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import CommentForm from '../comments/form';
+import { IArticle, IComment } from '../lib/types';
 import {
   FormWrapper,
   roles,
@@ -14,41 +15,57 @@ import {
 } from '../lib/utils';
 import s from './styles.module.scss';
 
-const ShowComment = ({ comment, articleId, isBelongsToUser, editComment, deleteComment }) => (
-  <div className="mb-15">
-    <div className="d-flex align-items-center">
-      {comment.author ? (
-        <div className="d-flex align-items-center">
-          <i className={userRolesToIcons[comment.author.role]}></i>
-          <div className="steelblue ml-5">{comment.author.name}</div>
-        </div>
-      ) : (
-        <div className="d-flex align-items-center">
-          <i className={userRolesToIcons[roles.guest]}></i>
-          <div className="steelblue ml-5">{comment.guest_name}</div>
-        </div>
-      )}
-      {isBelongsToUser(comment.author_id) && (
-        <div className="ml-30">
-          <i
-            className="fa fa-edit fa_big fa_link"
-            title="edit"
-            onClick={editComment(comment.id)}
-          ></i>
-          <i
-            className="fa fa-trash-alt fa_big fa_link"
-            title="delete"
-            onClick={deleteComment({ articleId, commentId: comment.id })}
-          ></i>
-        </div>
-      )}
+interface IShowComment {
+  comment: IComment;
+  articleId: any;
+  isBelongsToUser: any;
+  editComment: any;
+  deleteComment: any;
+}
+const ShowComment = (props: IShowComment) => {
+  const { comment, articleId, isBelongsToUser, editComment, deleteComment } = props;
+  return (
+    <div className="mb-15">
+      <div className="d-flex align-items-center">
+        {comment.author ? (
+          <div className="d-flex align-items-center">
+            <i className={userRolesToIcons[comment.author.role]}></i>
+            <div className="steelblue ml-5">{comment.author.name}</div>
+          </div>
+        ) : (
+          <div className="d-flex align-items-center">
+            <i className={userRolesToIcons[roles.guest]}></i>
+            <div className="steelblue ml-5">{comment.guest_name}</div>
+          </div>
+        )}
+        {isBelongsToUser(comment.author_id) && (
+          <div className="ml-30">
+            <i
+              className="fa fa-edit fa_big fa_link"
+              title="edit"
+              onClick={editComment(comment.id)}
+            ></i>
+            <i
+              className="fa fa-trash-alt fa_big fa_link"
+              title="delete"
+              onClick={deleteComment({ articleId, commentId: comment.id })}
+            ></i>
+          </div>
+        )}
+      </div>
+      <div className="text-justify">{comment.text}</div>
+      <div className="text-light">{format(parseISO(comment.created_at), 'dd MMM yyyy HH:mm')}</div>
     </div>
-    <div className="text-justify">{comment.text}</div>
-    <div className="text-light">{format(parseISO(comment.created_at), 'dd MMM yyyy HH:mm')}</div>
-  </div>
-);
+  );
+};
 
-const EditComment = ({ comment, cancelEditingComment, saveEditedComment }) => {
+interface IEditComment {
+  comment: IComment;
+  cancelEditingComment: any;
+  saveEditedComment: any;
+}
+const EditComment = (props: IEditComment) => {
+  const { comment, cancelEditingComment, saveEditedComment } = props;
   const formRef: any = React.useRef(null);
   const saveComment = () => formRef.current.requestSubmit();
 
@@ -85,7 +102,7 @@ const ShowArticle = () => {
   const { id: articleId } = useParams();
   const { $session, axios, getApiUrl } = useContext();
   const { isBelongsToUser, isSignedIn } = useStore($session);
-  const { data: article, mutate } = useSWR(getApiUrl('article', { id: articleId }));
+  const { data: article, mutate } = useSWR<IArticle>(getApiUrl('article', { id: articleId }));
   const [{ editedCommentId }, setState] = useImmerState({ editedCommentId: null });
   const [apiErrorsForNewCommentForm, setApiErrorsForNewCommentForm] = React.useState({});
   const [apiErrorsForEditCommentForm, setApiErrorsForEditCommentForm] = React.useState({});
@@ -123,7 +140,7 @@ const ShowArticle = () => {
     }
   };
 
-  if (isEmpty(article)) return null;
+  if (!article) return null;
 
   return (
     <div>
@@ -142,7 +159,7 @@ const ShowArticle = () => {
       {!isEmpty(article.tags) && (
         <div className={s.articleTags}>
           <div className="text-light mr-10">Tags:</div>
-          {article.tags.map(tag => (
+          {article.tags?.map(tag => (
             <div key={tag.id} className={s.articleTag}>
               {tag.name}
             </div>

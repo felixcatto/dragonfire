@@ -1,18 +1,19 @@
-import { isEmpty } from 'lodash';
+import { isNull } from 'lodash';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
 import { FormWrapper, useContext } from '../lib/utils';
 import Form from './form';
+import { ITag } from '../lib/types';
 
 const NewArticle = () => {
   const history = useHistory();
   const { getApiUrl, axios } = useContext();
-  const [tags, setTags] = React.useState(null);
+  const [tags, setTags] = React.useState<ITag[] | null>(null);
   const [apiErrors, setApiErrors] = React.useState({});
 
   React.useEffect(() => {
-    axios.get(getApiUrl('tags')).then(data => setTags(data));
+    axios.get(getApiUrl('tags')).then((data: ITag[]) => setTags(data));
   }, []);
 
   const onSubmit = async values => {
@@ -27,7 +28,7 @@ const NewArticle = () => {
   return (
     <div>
       <h3>Create New Article</h3>
-      {!isEmpty(tags) && (
+      {!isNull(tags) && (
         <FormWrapper apiErrors={apiErrors} setApiErrors={setApiErrors}>
           <Form tags={tags} onSubmit={onSubmit} />
         </FormWrapper>

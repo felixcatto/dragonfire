@@ -1,7 +1,7 @@
-import { isEmpty } from 'lodash';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
+import { IUser } from '../lib/types';
 import { FormWrapper, useContext } from '../lib/utils';
 import Form from './form';
 
@@ -9,7 +9,7 @@ const EditUser = () => {
   const history = useHistory();
   const { getApiUrl, axios } = useContext();
   const { id } = useParams();
-  const [user, setUser] = React.useState<any>(null);
+  const [user, setUser] = React.useState<IUser | null>(null);
   const [apiErrors, setApiErrors] = React.useState({});
 
   React.useEffect(() => {
@@ -18,7 +18,7 @@ const EditUser = () => {
 
   const onSubmit = async values => {
     try {
-      await axios.put(getApiUrl('user', { id: user.id }), values);
+      await axios.put(getApiUrl('user', { id: user!.id }), values);
       history.push(getUrl('users'));
     } catch (e) {
       setApiErrors(e.response.data.errors);
@@ -28,7 +28,7 @@ const EditUser = () => {
   return (
     <div>
       <h3>Edit User</h3>
-      {!isEmpty(user) && (
+      {user && (
         <FormWrapper apiErrors={apiErrors} setApiErrors={setApiErrors}>
           <Form onSubmit={onSubmit} user={user} />
         </FormWrapper>

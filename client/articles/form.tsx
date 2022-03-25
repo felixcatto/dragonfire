@@ -2,9 +2,17 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
-import { emptyObject, ErrorMessage, Field, MultiSelect, SubmitBtn } from '../lib/utils';
+import { IArticle, IEmptyObject, ITag } from '../lib/types';
+import { ErrorMessage, Field, MultiSelect, SubmitBtn } from '../lib/utils';
 
-export default ({ onSubmit, tags, article = emptyObject }) => {
+interface IForm {
+  onSubmit: any;
+  tags: ITag[];
+  article?: IArticle | IEmptyObject;
+}
+
+export default (props: IForm) => {
+  const { onSubmit, tags, article = {} } = props;
   const transformTag = tag => ({ value: tag.id, label: tag.name });
   const tagsForSelect = tags.map(transformTag);
   const articleTags = article.tags || [];

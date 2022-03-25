@@ -1,7 +1,7 @@
-import { isEmpty } from 'lodash';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
+import { ITag } from '../lib/types';
 import { FormWrapper, useContext } from '../lib/utils';
 import Form from './form';
 
@@ -9,7 +9,7 @@ const EditTag = () => {
   const history = useHistory();
   const { getApiUrl, axios } = useContext();
   const { id } = useParams();
-  const [tag, setTag] = React.useState<any>(null);
+  const [tag, setTag] = React.useState<ITag | null>(null);
   const [apiErrors, setApiErrors] = React.useState({});
 
   React.useEffect(() => {
@@ -18,7 +18,7 @@ const EditTag = () => {
 
   const onSubmit = async values => {
     try {
-      await axios.put(getApiUrl('tag', { id: tag.id }), values);
+      await axios.put(getApiUrl('tag', { id: tag!.id }), values);
       history.push(getUrl('tags'));
     } catch (e) {
       setApiErrors(e.response.data.errors);
@@ -28,7 +28,7 @@ const EditTag = () => {
   return (
     <div>
       <h3>Edit Tag</h3>
-      {!isEmpty(tag) && (
+      {tag && (
         <FormWrapper apiErrors={apiErrors} setApiErrors={setApiErrors}>
           <Form onSubmit={onSubmit} tag={tag} />
         </FormWrapper>

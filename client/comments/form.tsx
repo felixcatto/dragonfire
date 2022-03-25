@@ -3,9 +3,17 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
-import { emptyObject, ErrorMessage, Field, SubmitBtn, useContext } from '../lib/utils';
+import { IComment, IEmptyObject } from '../lib/types';
+import {  ErrorMessage, Field, SubmitBtn, useContext } from '../lib/utils';
 
-const CommentsForm = ({ onSubmit, comment = emptyObject, type = 'add' }, ref) => {
+interface IForm {
+  onSubmit: any;
+  type?: any;
+  comment?: IComment | IEmptyObject;
+}
+
+const CommentsForm = (props: IForm, ref) => {
+  const { onSubmit, comment = {}, type = 'add' } = props;
   const { $session } = useContext();
   const { isSignedIn } = useStore($session);
   const isNewCommentForm = type === 'add';

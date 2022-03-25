@@ -2,9 +2,16 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
-import { emptyObject, ErrorMessage, Field, roles, SubmitBtn } from '../lib/utils';
+import { IEmptyObject, IUser } from '../lib/types';
+import { ErrorMessage, Field, roles, SubmitBtn } from '../lib/utils';
 
-const UserForm = ({ onSubmit, user = emptyObject }) => {
+interface IForm {
+  onSubmit: any;
+  user?: IUser | IEmptyObject;
+}
+
+const UserForm = (props: IForm) => {
+  const { onSubmit, user = {} } = props;
   return (
     <Formik
       initialValues={{

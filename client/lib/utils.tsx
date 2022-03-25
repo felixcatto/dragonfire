@@ -8,6 +8,7 @@ import Select from 'react-select';
 import useSWROriginal from 'swr';
 import { roles } from '../../lib/sharedUtils';
 import Context from './context';
+import { IEmptyObject } from '../lib/types';
 
 export * from '../../lib/sharedUtils';
 export { Context };
@@ -103,7 +104,7 @@ export const useImmerState = initialState => {
   return [state, setImmerState.current];
 };
 
-export const emptyObject: any = new Proxy(
+export const emptyObject: IEmptyObject = new Proxy(
   {},
   {
     get() {
@@ -143,11 +144,11 @@ export const usePageSwitch = ({ pages, components, state }) => {
   };
 };
 
-export const useSWR = (url, config = {} as any) => {
+export function useSWR<ResponseType = any>(url, config = {} as any) {
   const { isFirstRender } = useContext();
   const revalidateOnMount = !config.initialData || (config.initialData && !isFirstRender.current);
-  return useSWROriginal(url, { ...config, revalidateOnMount });
-};
+  return useSWROriginal<ResponseType>(url, { ...config, revalidateOnMount });
+}
 
 export const dedup = fn => {
   let isRunning = false;

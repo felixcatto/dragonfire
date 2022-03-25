@@ -2,9 +2,16 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
-import { emptyObject, ErrorMessage, Field, SubmitBtn } from '../lib/utils';
+import { IEmptyObject, ITag } from '../lib/types';
+import { ErrorMessage, Field, SubmitBtn } from '../lib/utils';
 
-export default ({ onSubmit, tag = emptyObject }) => {
+interface IForm {
+  onSubmit: any;
+  tag?: ITag | IEmptyObject;
+}
+
+export default (props: IForm) => {
+  const { onSubmit, tag = {} } = props;
   return (
     <Formik initialValues={{ name: tag.name }} onSubmit={onSubmit}>
       <Form>

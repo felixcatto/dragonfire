@@ -1,13 +1,14 @@
+import { useStore } from 'effector-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useStore } from 'effector-react';
-import { useContext, useSWR } from '../lib/utils';
 import { getUrl } from '../lib/routes';
+import { IArticle } from '../lib/types';
+import { useContext, useSWR } from '../lib/utils';
 
 const Articles = () => {
   const { $session, getApiUrl, axios, ssrData } = useContext();
   const { isSignedIn, isBelongsToUser } = useStore($session);
-  const { data: articles, mutate } = useSWR(getApiUrl('articles'), {
+  const { data: articles, mutate } = useSWR<IArticle[]>(getApiUrl('articles'), {
     initialData: ssrData.articles,
   });
 
@@ -42,7 +43,7 @@ const Articles = () => {
               <td>{article.title}</td>
               <td className="text-justify">{article.text}</td>
               <td>{article.author?.name}</td>
-              <td>{article.tags.map(tag => tag.name).join(', ')}</td>
+              <td>{article.tags?.map(tag => tag.name).join(', ')}</td>
               <td>
                 <div className="d-flex justify-content-end">
                   <Link to={getUrl('article', { id: article.id })} className="mr-10">

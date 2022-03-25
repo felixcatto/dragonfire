@@ -1,16 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import { useStore } from 'effector-react';
-import { userRolesToIcons, useSWR, dedup, useContext } from '../lib/utils';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { getUrl } from '../lib/routes';
+import { IUser } from '../lib/types';
+import { dedup, useContext, userRolesToIcons, useSWR } from '../lib/utils';
 
 const userIconClass = role => cn('mr-5', userRolesToIcons[role]);
 
 const Users = () => {
   const { $session, getApiUrl, axios, ssrData } = useContext();
   const { isAdmin } = useStore($session);
-  const { data: users, mutate } = useSWR(getApiUrl('users'), { initialData: ssrData.users });
+  const { data: users, mutate } = useSWR<IUser[]>(getApiUrl('users'), {
+    initialData: ssrData.users,
+  });
   console.log(users);
 
   const deleteUser = id =>
