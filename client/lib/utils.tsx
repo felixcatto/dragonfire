@@ -5,7 +5,7 @@ import { compile } from 'path-to-regexp';
 import React, { useState } from 'react';
 import { NavLink as RouterNavLink, Route } from 'react-router-dom';
 import Select from 'react-select';
-import useSWROriginal from 'swr';
+import useSWROriginal, { useSWRConfig } from 'swr';
 import { roles } from '../../lib/sharedUtils';
 import Context from './context';
 import { IEmptyObject } from '../lib/types';
@@ -146,7 +146,9 @@ export const usePageSwitch = ({ pages, components, state }) => {
 
 export function useSWR<ResponseType = any>(url, config = {} as any) {
   const { isFirstRender } = useContext();
-  const revalidateOnMount = !config.initialData || (config.initialData && !isFirstRender.current);
+  const { fallback } = useSWRConfig();
+  const ssrData = fallback[url];
+  const revalidateOnMount = !ssrData || (ssrData && !isFirstRender.current);
   return useSWROriginal<ResponseType>(url, { ...config, revalidateOnMount });
 }
 

@@ -6,9 +6,9 @@ import { ITag } from '../lib/types';
 import { useContext, useSWR } from '../lib/utils';
 
 const Tags = () => {
-  const { $session, getApiUrl, axios, ssrData } = useContext();
+  const { $session, getApiUrl, axios } = useContext();
   const { isSignedIn } = useStore($session);
-  const { data: tags, mutate } = useSWR<ITag[]>(getApiUrl('tags'), { initialData: ssrData.tags });
+  const { data: tags, mutate } = useSWR<ITag[]>(getApiUrl('tags'));
 
   const deleteTag = id => async () => {
     await axios.delete(getApiUrl('tag', { id }));

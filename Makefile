@@ -1,6 +1,9 @@
 install:
 	npm i
 
+upgrade-dependencies:
+	npx ncu -u
+
 start:
 	npx gulp dev
 

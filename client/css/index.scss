@@ -247,11 +247,13 @@ $duration: 1.8s;
     margin-right: 20px;
     border-radius: 12px;
     color: #fff;
+    text-decoration: none;
     &:last-child {
       margin-right: 0;
     }
     &:hover {
       color: #fff;
+      text-decoration: underline;
     }
     &_active {
       background: #fff;

@@ -6,11 +6,9 @@ import { IArticle } from '../lib/types';
 import { useContext, useSWR } from '../lib/utils';
 
 const Articles = () => {
-  const { $session, getApiUrl, axios, ssrData } = useContext();
+  const { $session, getApiUrl, axios } = useContext();
   const { isSignedIn, isBelongsToUser } = useStore($session);
-  const { data: articles, mutate } = useSWR<IArticle[]>(getApiUrl('articles'), {
-    initialData: ssrData.articles,
-  });
+  const { data: articles, mutate } = useSWR<IArticle[]>(getApiUrl('articles'));
 
   const deleteArticle = id => async () => {
     await axios.delete(getApiUrl('article', { id }));

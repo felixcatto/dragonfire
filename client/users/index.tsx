@@ -9,11 +9,9 @@ import { dedup, useContext, userRolesToIcons, useSWR } from '../lib/utils';
 const userIconClass = role => cn('mr-5', userRolesToIcons[role]);
 
 const Users = () => {
-  const { $session, getApiUrl, axios, ssrData } = useContext();
+  const { $session, getApiUrl, axios } = useContext();
   const { isAdmin } = useStore($session);
-  const { data: users, mutate } = useSWR<IUser[]>(getApiUrl('users'), {
-    initialData: ssrData.users,
-  });
+  const { data: users, mutate } = useSWR<IUser[]>(getApiUrl('users'));
   console.log(users);
 
   const deleteUser = id =>

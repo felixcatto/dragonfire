@@ -44,9 +44,8 @@ const Provider = ({ initialState, children }) => {
       return Promise.reject(error);
     }
   );
-  const swrConfig = { fetcher: axios.get, revalidateOnFocus: false };
 
-  const { getApiUrl, currentUser } = initialState;
+  const { getApiUrl, currentUser, ssrData } = initialState;
   const actions = [makeSessionActions].reduce(
     (acc, makeActions) => ({
       ...acc,
@@ -65,6 +64,16 @@ const Provider = ({ initialState, children }) => {
       status: asyncStates.resolved,
       errors: null,
     }),
+  };
+
+  const swrConfig = {
+    fetcher: axios.get,
+    revalidateOnFocus: false,
+    fallback: {
+      [getApiUrl('users')]: ssrData.users,
+      [getApiUrl('articles')]: ssrData.articles,
+      [getApiUrl('tags')]: ssrData.tags,
+    },
   };
 
   return (

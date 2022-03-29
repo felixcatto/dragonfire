@@ -104,11 +104,12 @@ export const validate =
     }
   };
 
-export const requiredIfExists = () => [
-  'requiredIfExists',
-  'required',
-  value => isUndefined(value) || (isString(value) && !isEmpty(value)),
-];
+export const requiredIfExists = () =>
+  [
+    'requiredIfExists',
+    'required',
+    value => isUndefined(value) || (isString(value) && !isEmpty(value)),
+  ] as const;
 
 export const objectionPlugin = fp(async (app, { mode, models }) => {
   const knex = knexConnect(knexConfig[mode]);
